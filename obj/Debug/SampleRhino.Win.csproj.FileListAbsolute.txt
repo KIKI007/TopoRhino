@@ -1,0 +1,5 @@
+/Users/ziqwang/Downloads/SampleNativeLibrary-master/SampleRhino/obj/Debug/SampleRhino.Win.csprojAssemblyReference.cache
+/Users/ziqwang/Downloads/SampleNativeLibrary-master/bin/SampleRhino.dll
+/Users/ziqwang/Downloads/SampleNativeLibrary-master/bin/SampleRhino.pdb
+/Users/ziqwang/Downloads/SampleNativeLibrary-master/SampleRhino/obj/Debug/SampleRhino.dll
+/Users/ziqwang/Downloads/SampleNativeLibrary-master/SampleRhino/obj/Debug/SampleRhino.pdb

@@ -31,23 +31,29 @@ namespace TopoRhino
                 return Result.Cancel;
             }
 
+
+            //Read TopoCreator
             String xmlfile = fd.FileName;
             TopoCreator.readXML(xmlfile);
-            Guid current_layer_guid = doc.Layers.CurrentLayer.Id;
-
-            double tile_angle = 0;
-            Rhino.Input.RhinoGet.GetNumber("tiltAngle", false, ref tile_angle, 0, 90);
-            TopoCreator.setParaDouble("tiltAngle", tile_angle);
-
-            TopoCreator.refresh();
             int n_part = TopoCreator.partNumber();
 
+            //Tilt Angle
+            {
+                //double tile_angle = 0;
+                //Rhino.Input.RhinoGet.GetNumber("tiltAngle", false, ref tile_angle, 0, 90);
+                //TopoCreator.setParaDouble("tiltAngle", tile_angle);
+                //TopoCreator.refresh();
+            }
+
+
             //Layer
+            Guid current_layer_guid = doc.Layers.CurrentLayer.Id;
             Rhino.DocObjects.Layer childlayer = new Rhino.DocObjects.Layer();
             childlayer.ParentLayerId = current_layer_guid;
-            childlayer.Name = String.Format("Tilt {0}", tile_angle);
+            childlayer.Name = "Topo NURBS";
             int childindex = doc.Layers.Add(childlayer);
             doc.Layers.SetCurrentLayerIndex(childindex, true);
+
 
             for (int partID = 0; partID < n_part; partID++)
             {
@@ -84,7 +90,6 @@ namespace TopoRhino
                     obj.CommitChanges();
                 }
             }
-            //}
 
             Rhino.RhinoApp.RunScript("_SelMesh", false);
             Rhino.RhinoApp.RunScript("_MeshToNURB", false);

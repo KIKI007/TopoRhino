@@ -2,3 +2,7 @@
 /Users/ziqwang/Documents/GitHub/TopoRhino/bin/TopoRhino.pdb
 /Users/ziqwang/Documents/GitHub/TopoRhino/TopoRhino/obj/Debug/TopoRhino.dll
 /Users/ziqwang/Documents/GitHub/TopoRhino/TopoRhino/obj/Debug/TopoRhino.pdb
+/Users/ziqwang/Documents/GitHub/bin/TopoRhino.dll
+/Users/ziqwang/Documents/GitHub/bin/TopoRhino.pdb
+/Users/ziqwang/Documents/GitHub/TopoRhino/obj/Debug/TopoRhino.dll
+/Users/ziqwang/Documents/GitHub/TopoRhino/obj/Debug/TopoRhino.pdb

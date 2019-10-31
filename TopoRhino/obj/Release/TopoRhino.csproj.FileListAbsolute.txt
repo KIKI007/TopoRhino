@@ -3,5 +3,4 @@
 /Users/ziqwang/Documents/GitHub/bin/TopoRhino.dll
 /Users/ziqwang/Documents/GitHub/TopoRhino/obj/Release/TopoRhino.dll
 /Users/ziqwang/Documents/GitHub/TopoRhino/bin/TopoRhino.dll
-/Users/ziqwang/Documents/GitHub/TopoRhino/TopoRhino/obj/Release/TopoRhino.csprojAssemblyReference.cache
 /Users/ziqwang/Documents/GitHub/TopoRhino/TopoRhino/obj/Release/TopoRhino.dll

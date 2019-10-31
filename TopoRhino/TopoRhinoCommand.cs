@@ -35,19 +35,24 @@ namespace TopoRhino
             TopoCreator.readXML(xmlfile);
             Guid current_layer_guid = doc.Layers.CurrentLayer.Id;
 
-            double tile_angle = 0;
-            Rhino.Input.RhinoGet.GetNumber("tiltAngle", false, ref tile_angle, 0, 90);
-            TopoCreator.setParaDouble("tiltAngle", tile_angle);
+            //double tile_angle = 0;
+            //Rhino.Input.RhinoGet.GetNumber("tiltAngle", false, ref tile_angle, 0, 90);
+            //TopoCreator.setParaDouble("tiltAngle", tile_angle);
+            //TopoCreator.refresh();
 
-            TopoCreator.refresh();
             int n_part = TopoCreator.partNumber();
 
-            //Layer
+            //Part Layer
             Rhino.DocObjects.Layer childlayer = new Rhino.DocObjects.Layer();
             childlayer.ParentLayerId = current_layer_guid;
-            childlayer.Name = String.Format("Tilt {0}", tile_angle);
-            int childindex = doc.Layers.Add(childlayer);
-            doc.Layers.SetCurrentLayerIndex(childindex, true);
+            childlayer.Name = String.Format("Part");
+            int childpart_index = doc.Layers.Add(childlayer);
+
+            //Part Layer
+            childlayer = new Rhino.DocObjects.Layer();
+            childlayer.ParentLayerId = current_layer_guid;
+            childlayer.Name = String.Format("Boundary");
+            int childboundary_index = doc.Layers.Add(childlayer);
 
             for (int partID = 0; partID < n_part; partID++)
             {
@@ -63,22 +68,23 @@ namespace TopoRhino
                     return Result.Failure;
                 }
 
+                Rhino.DocObjects.RhinoObject obj = doc.Objects.Find(mesh_guid);
                 int mat_index;
                 if (TopoCreator.isBoundary(partID))
                 {
                     mat_index = doc.Materials.Find("PlasterBoundary", false);
+                    obj.Attributes.LayerIndex = childboundary_index;
                     //RhinoApp.WriteLine("{0}, {1}", partID, "PlasterBoundary");
                 }
                 else
                 {
                     mat_index = doc.Materials.Find("PlasterPart", false);
+                    obj.Attributes.LayerIndex = childpart_index;
                     //RhinoApp.WriteLine("{0}, {1}", partID, "PlasterPart");
                 }
 
                 if (mat_index != -1)
                 {
-                    Rhino.DocObjects.RhinoObject obj = doc.Objects.Find(mesh_guid);
-                    obj.Attributes.LayerIndex = childindex;
                     obj.Attributes.MaterialIndex = mat_index;
                     obj.Attributes.MaterialSource = Rhino.DocObjects.ObjectMaterialSource.MaterialFromObject;
                     obj.CommitChanges();

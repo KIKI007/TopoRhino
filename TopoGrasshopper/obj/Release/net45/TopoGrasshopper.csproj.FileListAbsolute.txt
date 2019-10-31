@@ -1,0 +1,7 @@
+/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/bin/Release/net45/TopoGrasshopper.dll
+/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/bin/Release/net45/TopoGrasshopper.pdb
+/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/obj/Release/net45/TopoGrasshopper.csprojAssemblyReference.cache
+/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/obj/Release/net45/TopoGrasshopper.AssemblyInfoInputs.cache
+/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/obj/Release/net45/TopoGrasshopper.AssemblyInfo.cs
+/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/obj/Release/net45/TopoGrasshopper.dll
+/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/obj/Release/net45/TopoGrasshopper.pdb

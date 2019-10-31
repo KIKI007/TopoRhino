@@ -54,6 +54,7 @@ namespace TopoRhino
                 if (assignMesh(partID, ref cmesh))
                 {
                     float ground_height = ComputeGroundHeight();
+                    Console.WriteLine("Height {0}", ground_height);
                     for (int id = 0; id < cmesh.n_vertices; id++)
                     {
                         IntPtr pPoint = new IntPtr(cmesh.points.ToInt64() + id * Marshal.SizeOf(typeof(CPoint)));

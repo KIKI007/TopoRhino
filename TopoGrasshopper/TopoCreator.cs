@@ -4,11 +4,11 @@ using System;
 using Rhino;
 using Rhino.Commands;
 
-namespace TopoRhino
+namespace TopoGrasshopper
 {
   internal static class Import
   {
-    public const string lib = "/Users/ziqwang/Documents/GitHub/TopoLockCreator/Release/libdllTopoLockCreator.dylib";
+    public const string lib = "libdllTopoLockCreator.dylib";
   }
     /// <summary>
     /// http://msdn.microsoft.com/en-us/library/aa288468(VS.71).aspx
@@ -16,6 +16,8 @@ namespace TopoRhino
     /// </summary>mesh.points = new CPoint[mesh.n_vertices];
    internal static class TopoCreator
   {
+        public static String xmlpath = "";
+
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int readXML(string xmlpath);
 
@@ -40,6 +42,8 @@ namespace TopoRhino
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void setParaDouble(string name, double value);
 
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void preview();
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void refresh();

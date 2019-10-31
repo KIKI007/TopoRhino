@@ -1,4 +1,6 @@
 using System;
+using System.IO;
+using System.Collections;
 using System.Collections.Generic;
 
 using Grasshopper;
@@ -17,9 +19,9 @@ namespace TopoGrasshopper
         /// new tabs/panels will automatically be created.
         /// </summary>
         public TopoGrasshopperComponent()
-          : base("TopoGrasshopperComponent", "ASpi",
-            "Construct an Archimedean, or arithmetic, spiral given its radii and number of turns.",
-            "Curve", "Primitive")
+          : base("TopoGrasshopperComponent", "TopoCreator",
+            "Construct an Topological Interlocking by XML Filename.",
+            "Surface", "Freeform")
         {
         }
 
@@ -32,14 +34,16 @@ namespace TopoGrasshopper
             // You can often supply default values when creating parameters.
             // All parameters must have the correct access type. If you want 
             // to import lists or trees of values, modify the ParamAccess flag.
-            pManager.AddPlaneParameter("Plane", "P", "Base plane for spiral", GH_ParamAccess.item, Plane.WorldXY);
-            pManager.AddNumberParameter("Inner Radius", "R0", "Inner radius for spiral", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Outer Radius", "R1", "Outer radius for spiral", GH_ParamAccess.item, 10.0);
-            pManager.AddIntegerParameter("Turns", "T", "Number of turns between radii", GH_ParamAccess.item, 10);
+            pManager.AddTextParameter("XMLFile", "xml", "XML Filename", GH_ParamAccess.item);
+
+            pManager.AddNumberParameter("tilt Angle", "tilt", "tilt angle for the model", GH_ParamAccess.item);
+
+            pManager.AddBooleanParameter("Preview", "preview", "preview mode", GH_ParamAccess.item, true);
 
             // If you want to change properties of certain parameters, 
             // you can use the pManager instance to access them by index:
             //pManager[0].Optional = true;
+            pManager[2].Optional = true;
         }
 
         /// <summary>
@@ -49,7 +53,12 @@ namespace TopoGrasshopper
         {
             // Use the pManager object to register your output parameters.
             // Output parameters do not have default values, but they too must have the correct access type.
-            pManager.AddCurveParameter("Spiral", "S", "Spiral curve", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Number of Part", "N", "Number of Parts", GH_ParamAccess.item);
+
+            pManager.AddMeshParameter("Meshes", "M", "Topological Interlocking Parts", GH_ParamAccess.list);
+
+
+            //pManager.AddGenericParameter("TopoLock", "Topo", "TopoLocker Class", GH_ParamAccess.item);
 
             // Sometimes you want to hide a specific parameter from the Rhino preview.
             // You can use the HideParameter() method as a quick way:
@@ -63,68 +72,53 @@ namespace TopoGrasshopper
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            // First, we need to retrieve all data from the input parameters.
-            // We'll start by declaring variables and assigning them starting values.
-            Plane plane = Plane.WorldXY;
-            double radius0 = 0.0;
-            double radius1 = 0.0;
-            int turns = 0;
 
+            String xml_file = "";
+            Double tilt_angle = 0;
+            Boolean preview_mode = true;
             // Then we need to access the input parameters individually. 
             // When data cannot be extracted from a parameter, we should abort this method.
-            if (!DA.GetData(0, ref plane)) return;
-            if (!DA.GetData(1, ref radius0)) return;
-            if (!DA.GetData(2, ref radius1)) return;
-            if (!DA.GetData(3, ref turns)) return;
-
+            if (!DA.GetData(0, ref xml_file)) return;
+            if (!DA.GetData(1, ref tilt_angle)) return;
+            if (!DA.GetData(2, ref preview_mode)) return;
             // We should now validate the data and warn the user if invalid data is supplied.
-            if (radius0 < 0.0)
+            if (Path.GetExtension(xml_file.ToString()) != ".xml")
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Inner radius must be bigger than or equal to zero");
-                return;
-            }
-            if (radius1 <= radius0)
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Outer radius must be bigger than the inner radius");
-                return;
-            }
-            if (turns <= 0)
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Spiral turn count must be bigger than or equal to one");
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Input File must be xml file");
                 return;
             }
 
-            // We're set to create the spiral now. To keep the size of the SolveInstance() method small, 
-            // The actual functionality will be in a different method:
-            Curve spiral = CreateSpiral(plane, radius0, radius1, turns);
-
-            // Finally assign the spiral to the output parameter.
-            DA.SetData(0, spiral);
-        }
-
-        Curve CreateSpiral(Plane plane, double r0, double r1, Int32 turns)
-        {
-            Line l0 = new Line(plane.Origin + r0 * plane.XAxis, plane.Origin + r1 * plane.XAxis);
-            Line l1 = new Line(plane.Origin - r0 * plane.XAxis, plane.Origin - r1 * plane.XAxis);
-
-            Point3d[] p0;
-            Point3d[] p1;
-
-            l0.ToNurbsCurve().DivideByCount(turns, true, out p0);
-            l1.ToNurbsCurve().DivideByCount(turns, true, out p1);
-
-            PolyCurve spiral = new PolyCurve();
-
-            for (int i = 0; i < p0.Length - 1; i++)
+            if (tilt_angle < 0 || tilt_angle > 90)
             {
-                Arc arc0 = new Arc(p0[i], plane.YAxis, p1[i + 1]);
-                Arc arc1 = new Arc(p1[i + 1], -plane.YAxis, p0[i + 1]);
-
-                spiral.Append(arc0);
-                spiral.Append(arc1);
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid Tilt Angle");
+                return;
             }
 
-            return spiral;
+            if(TopoCreator.xmlpath != xml_file)
+            {
+                TopoCreator.readXML(xml_file);
+                TopoCreator.xmlpath = xml_file;
+            }
+                
+
+            int n_part = TopoCreator.partNumber();
+            TopoCreator.setParaDouble("tiltAngle", tilt_angle);
+
+            if (preview_mode)
+                TopoCreator.preview();
+            else
+                TopoCreator.refresh();
+
+            DA.SetData(0, n_part);
+            List<Mesh> meshes = new List<Mesh>();
+            for(int partID = 0; partID < n_part; partID++)
+            {
+                Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
+                TopoCreator.getMesh(partID, mesh);
+                meshes.Add(mesh);  
+            }
+
+            DA.SetDataList(1, meshes);
         }
 
         /// <summary>

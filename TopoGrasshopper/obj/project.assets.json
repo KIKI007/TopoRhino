@@ -1,0 +1,127 @@
+{
+  "version": 3,
+  "targets": {
+    ".NETFramework,Version=v4.5": {
+      "Grasshopper/6.16.19190.7001": {
+        "type": "package",
+        "dependencies": {
+          "RhinoCommon": "[6.16.19190.7001]"
+        },
+        "compile": {
+          "lib/net45/GH_IO.dll": {},
+          "lib/net45/Grasshopper.dll": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        },
+        "build": {
+          "build/net45/Grasshopper.targets": {}
+        }
+      },
+      "RhinoCommon/6.16.19190.7001": {
+        "type": "package",
+        "compile": {
+          "lib/net45/Eto.dll": {},
+          "lib/net45/Rhino.UI.dll": {},
+          "lib/net45/RhinoCommon.dll": {}
+        },
+        "runtime": {
+          "lib/net45/_._": {}
+        },
+        "build": {
+          "build/net45/RhinoCommon.targets": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "Grasshopper/6.16.19190.7001": {
+      "sha512": "XfQFKCXxbRSgU3uYVij2JI+WpAOY4oPcfRNsdo/wccgtYgmgFQH1JKFxG4w2+Wbh7N61iMdHh55UDtjMvXgLIA==",
+      "type": "package",
+      "path": "grasshopper/6.16.19190.7001",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/net45/Grasshopper.targets",
+        "grasshopper.6.16.19190.7001.nupkg.sha512",
+        "grasshopper.nuspec",
+        "lib/net45/GH_IO.XML",
+        "lib/net45/GH_IO.dll",
+        "lib/net45/Grasshopper.dll",
+        "lib/net45/Grasshopper.xml"
+      ]
+    },
+    "RhinoCommon/6.16.19190.7001": {
+      "sha512": "Vj5hxMIRSeRI0oqpS35TxQklClcwp/J8Hn7POdA7HjjjykH2nBP0Nnr6LPmL0YOcwwrisp/3GaFbsZ/xy1zU9w==",
+      "type": "package",
+      "path": "rhinocommon/6.16.19190.7001",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "Eto-LICENSE.txt",
+        "build/net45/RhinoCommon.targets",
+        "lib/net45/Eto.dll",
+        "lib/net45/Eto.xml",
+        "lib/net45/Rhino.UI.dll",
+        "lib/net45/RhinoCommon.XML",
+        "lib/net45/RhinoCommon.dll",
+        "rhinocommon.6.16.19190.7001.nupkg.sha512",
+        "rhinocommon.nuspec"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    ".NETFramework,Version=v4.5": [
+      "Grasshopper >= 6.16.19190.7001"
+    ]
+  },
+  "packageFolders": {
+    "/Users/ziqwang/.nuget/packages/": {},
+    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/TopoGrasshopper.csproj",
+      "projectName": "TopoGrasshopper",
+      "projectPath": "/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/TopoGrasshopper.csproj",
+      "packagesPath": "/Users/ziqwang/.nuget/packages/",
+      "outputPath": "/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/obj/",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+      ],
+      "configFilePaths": [
+        "/Users/ziqwang/.config/NuGet/NuGet.Config"
+      ],
+      "originalTargetFrameworks": [
+        "net45"
+      ],
+      "sources": {
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net45": {
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net45": {
+        "dependencies": {
+          "Grasshopper": {
+            "include": "Compile, Build",
+            "target": "Package",
+            "version": "[6.16.19190.7001, )"
+          }
+        },
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
+      }
+    }
+  }
+}

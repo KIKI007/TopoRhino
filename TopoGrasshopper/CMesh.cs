@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace TopoRhino
+namespace TopoGrasshopper
 {
     [StructLayout(LayoutKind.Sequential)]
     struct CPoint

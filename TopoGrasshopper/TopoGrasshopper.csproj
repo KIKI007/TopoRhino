@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+  <PropertyGroup>
+    <TargetFramework>net45</TargetFramework>
+    <RootNamespace>TopoGrasshopper</RootNamespace>
+    <Version>1.0</Version>
+    <Title>TopoGrasshopper</Title>
+    <Description>Description of TopoGrasshopper</Description>
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Grasshopper" Version="6.16.19190.7001" IncludeAssets="compile;build" />
+  </ItemGroup>
+  
+</Project>

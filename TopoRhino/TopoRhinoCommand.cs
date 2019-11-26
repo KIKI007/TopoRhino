@@ -34,16 +34,9 @@ namespace TopoRhino
 
             //Read TopoCreator
             String xmlfile = fd.FileName;
-            TopoCreator.readXML(xmlfile);
-            int n_part = TopoCreator.partNumber();
-
-<<<<<<< HEAD
-            //double tile_angle = 0;
-            //Rhino.Input.RhinoGet.GetNumber("tiltAngle", false, ref tile_angle, 0, 90);
-            //TopoCreator.setParaDouble("tiltAngle", tile_angle);
-            //TopoCreator.refresh();
-
-            int n_part = TopoCreator.partNumber();
+            IntPtr topoData = TopoCreator.readXML(xmlfile);
+            int n_part = TopoCreator.partNumber(topoData);
+            Guid current_layer_guid = doc.Layers.CurrentLayer.Id;
 
             //Part Layer
             Rhino.DocObjects.Layer childlayer = new Rhino.DocObjects.Layer();
@@ -56,43 +49,25 @@ namespace TopoRhino
             childlayer.ParentLayerId = current_layer_guid;
             childlayer.Name = String.Format("Boundary");
             int childboundary_index = doc.Layers.Add(childlayer);
-=======
-            //Tilt Angle
-            {
-                //double tile_angle = 0;
-                //Rhino.Input.RhinoGet.GetNumber("tiltAngle", false, ref tile_angle, 0, 90);
-                //TopoCreator.setParaDouble("tiltAngle", tile_angle);
-                //TopoCreator.refresh();
-            }
-
-
-            //Layer
-            Guid current_layer_guid = doc.Layers.CurrentLayer.Id;
-            Rhino.DocObjects.Layer childlayer = new Rhino.DocObjects.Layer();
-            childlayer.ParentLayerId = current_layer_guid;
-            childlayer.Name = "Topo NURBS";
-            int childindex = doc.Layers.Add(childlayer);
-            doc.Layers.SetCurrentLayerIndex(childindex, true);
->>>>>>> af77a0f5dcd769cfe33c124fa21e2101e0728112
 
 
             for (int partID = 0; partID < n_part; partID++)
             {
                 Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
-                TopoCreator.getMesh(partID, mesh);
+                TopoCreator.getMesh(partID, mesh, topoData);
 
                 Guid mesh_guid = doc.Objects.AddMesh(mesh);
 
                 //error: exit
                 if (mesh_guid == Guid.Empty)
                 {
-                    TopoCreator.deleteStructure();
+                    TopoCreator.deleteStructure(topoData);
                     return Result.Failure;
                 }
 
                 Rhino.DocObjects.RhinoObject obj = doc.Objects.Find(mesh_guid);
                 int mat_index;
-                if (TopoCreator.isBoundary(partID))
+                if (TopoCreator.isBoundary(partID, topoData))
                 {
                     mat_index = doc.Materials.Find("PlasterBoundary", false);
                     obj.Attributes.LayerIndex = childboundary_index;
@@ -121,7 +96,7 @@ namespace TopoRhino
             Rhino.RhinoApp.RunScript("_MergeAllFaces", false);
 
             doc.Objects.UnselectAll();
-            TopoCreator.deleteStructure();
+            TopoCreator.deleteStructure(topoData);
             return Result.Success;
         }
   }

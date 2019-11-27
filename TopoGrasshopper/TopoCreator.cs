@@ -43,6 +43,10 @@ namespace TopoGrasshopper
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void refresh(IntPtr topoData);
 
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void preview(IntPtr topoData);
+
+
         public static bool getMesh(int partID, Rhino.Geometry.Mesh rhino_mesh, IntPtr topoData)
         {
             CMesh cmesh = new CMesh();

@@ -11,6 +11,11 @@ namespace TopoGrasshopper
 {
     public class TopoGrasshopperComponent : GH_Component
     {
+        //
+        private IntPtr topoData;
+        private String xmlPath;
+
+
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
         /// constructor without any arguments.
@@ -23,6 +28,16 @@ namespace TopoGrasshopper
             "Construct an Topological Interlocking by XML Filename.",
             "Surface", "Freeform")
         {
+            xmlPath = "";
+        }
+
+        ~TopoGrasshopperComponent()
+        {
+            if (topoData != IntPtr.Zero)
+            {
+          
+                TopoCreator.deleteStructure(topoData);
+            }
         }
 
         /// <summary>
@@ -34,7 +49,7 @@ namespace TopoGrasshopper
             // You can often supply default values when creating parameters.
             // All parameters must have the correct access type. If you want 
             // to import lists or trees of values, modify the ParamAccess flag.
-            pManager.AddTextParameter("XMLFile", "xml", "XML Filename", GH_ParamAccess.item);
+            pManager.AddTextParameter("XMLFile", "xml", "XML Filename", GH_ParamAccess.item, "/Users/ziqwang/Documents/GitHub/TopoLockProject/Result/Paper_Render/fig_intro_sphere/SphereA80_Hex_T0.0.xml");
 
             pManager.AddNumberParameter("tilt Angle", "tilt", "tilt angle for the model", GH_ParamAccess.item);
 
@@ -43,6 +58,7 @@ namespace TopoGrasshopper
             // If you want to change properties of certain parameters, 
             // you can use the pManager instance to access them by index:
             //pManager[0].Optional = true;
+            pManager[0].Optional = true;
             pManager[2].Optional = true;
         }
 
@@ -94,27 +110,31 @@ namespace TopoGrasshopper
                 return;
             }
 
-            if(TopoCreator.xmlpath != xml_file)
+            if(xmlPath != xml_file || xmlPath == "")
             {
-                TopoCreator.readXML(xml_file);
-                TopoCreator.xmlpath = xml_file;
+                if(topoData != IntPtr.Zero)
+                {
+                    TopoCreator.deleteStructure(topoData);
+                }
+                topoData = TopoCreator.readXML(xml_file);
+                xmlPath = xml_file;
             }
                 
 
-            int n_part = TopoCreator.partNumber();
-            TopoCreator.setParaDouble("tiltAngle", tilt_angle);
+            int n_part = TopoCreator.partNumber(topoData);
+            TopoCreator.setParaDouble("tiltAngle", tilt_angle, topoData);
 
             if (preview_mode)
-                TopoCreator.preview();
+                TopoCreator.preview(topoData);
             else
-                TopoCreator.refresh();
+                TopoCreator.refresh(topoData);
 
             DA.SetData(0, n_part);
             List<Mesh> meshes = new List<Mesh>();
             for(int partID = 0; partID < n_part; partID++)
             {
                 Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
-                TopoCreator.getMesh(partID, mesh);
+                TopoCreator.getMesh(partID, mesh, topoData);
                 meshes.Add(mesh);  
             }
 

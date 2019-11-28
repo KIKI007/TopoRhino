@@ -1,2 +1,0 @@
-/Users/ziqwang/Downloads/SampleNativeLibrary-master/bin/SampleRhino.dll
-/Users/ziqwang/Downloads/SampleNativeLibrary-master/SampleRhino/obj/Release/SampleRhino.dll

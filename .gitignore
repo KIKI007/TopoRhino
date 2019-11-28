@@ -1,3 +1,7 @@
 packages/
 .vs/
 bin/
+TopoRhino/bin
+TopoRhino/obj
+TopoRhino/Properties
+TopoGrasshopper/obj

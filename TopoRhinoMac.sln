@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29519.87
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopoRhino", "TopoRhino\TopoRhinoMac.csproj", "{90AAF8B5-F315-4CF9-B0A6-D593BC2C8F83}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TopoGrasshopper", "TopoGrasshopper\TopoGrasshopperMac.csproj", "{BB72F8B8-ED74-4CBB-9CC1-783C60A5813F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90AAF8B5-F315-4CF9-B0A6-D593BC2C8F83}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90AAF8B5-F315-4CF9-B0A6-D593BC2C8F83}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90AAF8B5-F315-4CF9-B0A6-D593BC2C8F83}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90AAF8B5-F315-4CF9-B0A6-D593BC2C8F83}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB72F8B8-ED74-4CBB-9CC1-783C60A5813F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB72F8B8-ED74-4CBB-9CC1-783C60A5813F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB72F8B8-ED74-4CBB-9CC1-783C60A5813F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB72F8B8-ED74-4CBB-9CC1-783C60A5813F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E1A3E81-F5D1-43C5-B812-07140A793F1D}
+	EndGlobalSection
+EndGlobal

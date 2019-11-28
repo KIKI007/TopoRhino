@@ -8,8 +8,12 @@ namespace TopoRhino
 {
   internal static class Import
   {
-    public const string lib = "/Users/ziqwang/Documents/GitHub/TopoLite/Release/dllTopo.dylib";
-  }
+#if _WINDOWS
+        public const string lib = "dllTopo.dll";
+#else
+        public const string lib = "libdllTopo.dylib";
+#endif
+    }
     /// <summary>
     /// http://msdn.microsoft.com/en-us/library/aa288468(VS.71).aspx
     /// http://www.mono-project.com/docs/advanced/pinvoke/

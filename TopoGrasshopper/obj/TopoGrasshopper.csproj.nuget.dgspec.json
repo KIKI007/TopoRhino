@@ -1,28 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/TopoGrasshopper.csproj": {}
+    "C:\\Users\\ziqwang\\Documents\\GitHub\\TopoRhino\\TopoGrasshopper\\TopoGrasshopper.csproj": {}
   },
   "projects": {
-    "/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/TopoGrasshopper.csproj": {
+    "C:\\Users\\ziqwang\\Documents\\GitHub\\TopoRhino\\TopoGrasshopper\\TopoGrasshopper.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/TopoGrasshopper.csproj",
+        "projectUniqueName": "C:\\Users\\ziqwang\\Documents\\GitHub\\TopoRhino\\TopoGrasshopper\\TopoGrasshopper.csproj",
         "projectName": "TopoGrasshopper",
-        "projectPath": "/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/TopoGrasshopper.csproj",
-        "packagesPath": "/Users/ziqwang/.nuget/packages/",
-        "outputPath": "/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/obj/",
+        "projectPath": "C:\\Users\\ziqwang\\Documents\\GitHub\\TopoRhino\\TopoGrasshopper\\TopoGrasshopper.csproj",
+        "packagesPath": "C:\\Users\\ziqwang\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\ziqwang\\Documents\\GitHub\\TopoRhino\\TopoGrasshopper\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "/Users/ziqwang/.config/NuGet/NuGet.Config"
+          "C:\\Users\\ziqwang\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
           "net45"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -45,7 +47,7 @@
               "version": "[6.16.19190.7001, )"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.0.100/RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.0.100\\RuntimeIdentifierGraph.json"
         }
       }
     }

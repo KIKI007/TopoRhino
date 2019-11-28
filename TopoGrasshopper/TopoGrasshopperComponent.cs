@@ -49,7 +49,7 @@ namespace TopoGrasshopper
             // You can often supply default values when creating parameters.
             // All parameters must have the correct access type. If you want 
             // to import lists or trees of values, modify the ParamAccess flag.
-            pManager.AddTextParameter("XMLFile", "xml", "XML Filename", GH_ParamAccess.item, "/Users/ziqwang/Documents/GitHub/TopoLockProject/Result/Paper_Render/fig_intro_sphere/SphereA80_Hex_T0.0.xml");
+            pManager.AddTextParameter("XMLFile", "xml", "XML Filename", GH_ParamAccess.item);
 
             pManager.AddNumberParameter("tilt Angle", "tilt", "tilt angle for the model", GH_ParamAccess.item);
 
@@ -58,7 +58,6 @@ namespace TopoGrasshopper
             // If you want to change properties of certain parameters, 
             // you can use the pManager instance to access them by index:
             //pManager[0].Optional = true;
-            pManager[0].Optional = true;
             pManager[2].Optional = true;
         }
 

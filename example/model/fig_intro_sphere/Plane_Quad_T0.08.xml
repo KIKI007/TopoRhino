@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<Documents>
+	<GUISettings>
+		<patternID value="1" />
+		<patternRadius value="15" />
+		<tiltAngle value="35.2599983" />
+		<cutUpper value="0.0799999982" />
+		<cutLower value="0.0799999982" />
+		<minCrossArea value="0.100000001" />
+		<minBoundaryEdge value="0.100000001" />
+		<texturedModel value="1" />
+		<smooth_bdry value="0" />
+		<ground_touch_bdry value="0" />
+		<small_zero_eps value="1.00000001e-07" />
+		<big_zero_eps value="9.99999975e-06" />
+		<ShapeOp_Settings>
+			<shapeop_meshFit value="1" />
+			<shapeop_regularity value="1" />
+			<shapeop_planarity value="1" />
+			<shapeop_bending value="0" />
+			<shapeop_boundary value="0" />
+			<shapeop_iterator value="0" />
+		</ShapeOp_Settings>
+		<Para_Mitsuba>
+			<wireframe_thickness value="0.00100000005" />
+			<wireframe_circle_vertex_num value="16" />
+			<mitsuba_PartYRotation value="3.20000005" />
+			<mitsuba_CameraRotation value="45" />
+			<mitsuba_CameraDistance value="4" />
+			<mitsuba_SunTime value="12" />
+			<mitsuba_SunStrength value="3" />
+			<mitsuba_width value="1024" />
+			<mitsuba_height value="768" />
+			<mitsuba_sample value="256" />
+			<output_mitsuba value="0" />
+		</Para_Mitsuba>
+		<Para_ContactGraph>
+			<mosek_intpntCoTolRelGap value="9.99999996e-13" />
+			<mosek_intpntCoTolInfeas value="9.99999996e-13" />
+			<mosek_interlocking_eps value="1.00000001e-07" />
+			<mosek_rbe_eps value="1.00000001e-07" />
+			<mosek_rbeForce_upperBound value="10000000" />
+			<slope_binarySearch_eps value="0.100000001" />
+			<slope_bound_eps value="0.100000001" />
+			<slope_num_init_sample value="4" />
+			<mosek_rbe_friction_coeff value="0" />
+			<kmeans_iteration value="100" />
+			<GravityX value="0" />
+			<GravityY value="-1" />
+			<GravityZ value="0" />
+		</Para_ContactGraph>
+		<Para_CrossMesh>
+			<crossmesh_quadTree_leafNodeSize value="0.00999999978" />
+		</Para_CrossMesh>
+		<pickPartIDs></pickPartIDs>
+		<Interact_Matrix>1.254816,-1.395901,0.000000,0.000000,1.395901,1.254816,0.000000,0.000000,0.000000,0.000000,0.375395,0.000000,0.122135,0.107700,0.000000,1.000000</Interact_Matrix>
+		<Camera>
+			<worldAxesMat>-0.998422,0.005307,-0.056615,0.000000,-0.046037,0.509125,0.859543,0.000000,0.033381,0.860738,-0.508041,0.000000,0.000000,0.000000,-4.000000,1.000000</worldAxesMat>
+			<worldMatrix>-1.232481,0.006554,-0.069889,0.000000,-0.044221,0.882054,0.862565,0.000000,0.054512,0.863647,-0.880382,0.000000,0.005000,0.125000,-3.800000,1.000000</worldMatrix>
+		</Camera>
+		<textureScaleFactor value="0.899999976" />
+		<only_cut_bdry value="0" />
+		<Para_Opt>
+			<opt_activeset_eps value="9.99999975e-05" />
+			<opt_gravity_scale_factor value="10000" />
+			<opt_knitro_opttol value="1.00000001e-07" />
+			<opt_iterations_times value="100" />
+			<opt_tiltAngle_width value="20" />
+			<opt_compression_weight value="0.00999999978" />
+			<opt_tension_weight value="10000" />
+			<opt_mod value="0" />
+			<opt_init_levelset value="0.00100000005" />
+			<opt_radius_scale_factor value="0.200000003" />
+			<opt_rs_factor_lower_bound value="0.00999999978" />
+			<opt_poly_size value="6" />
+			<opt_edge_sample value="10" />
+			<opt_tot_time value="0" />
+		</Para_Opt>
+		<faceface_contact value="1" />
+		<edgeedge_contact value="1" />
+		<slopSample value="32" />
+		<Unit value="100" />
+		<clipper_scale value="100000000" />
+		<tilt_face_angle_min value="0" />
+		<tilt_face_angle_max value="0" />
+		<Para_Assembly>
+			<showAssembly value="0" />
+			<assembling_layer value="1" />
+			<assembling_Kth_part value="-1" />
+			<assembling_vec_length value="0.200000003" />
+		</Para_Assembly>
+		<Para_Support>
+			<showSupport value="0" />
+			<ground_height value="-0.034235049" />
+			<support_thickness value="0.100000001" />
+			<support_layer value="-1" />
+			<support_smallest_area value="0.00999999978" />
+		</Para_Support>
+		<penetration_check value="1" />
+		<Boundary_PartIDs>13,25,26,31,39,40,41,44,45,46,54,55,56,57,58,59,63,67,68,69,70,73,74,77,78,80,81,83,84,85,86,87,88,89</Boundary_PartIDs>
+	</GUISettings>
+	<Output>
+		<Structure path="Plane_Quad_T0.08_data/Plane_Quad_T0.08_Surface.obj" />
+		<CrossMesh path="Plane_Quad_T0.08_data/Plane_Quad_T0.08_CrossMesh.obj" />
+		<PartGeometry>Plane_Quad_T0.08_data/PartGeometry/Part_07.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_06.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_12.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_04.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_10.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_38.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_11.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_05.obj
+Plane_Quad_T0.08_data/PartGeometry/Boundary.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_29.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_01.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_15.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_14.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_00.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_28.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_16.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_02.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_03.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_17.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_64.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_65.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_71.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_72.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_66.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_62.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_76.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_49.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_75.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_61.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_60.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_48.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_51.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_79.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_50.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_52.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_53.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_47.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_43.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_42.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_82.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_32.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_27.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_33.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_19.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_18.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_30.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_24.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_08.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_20.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_34.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_35.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_21.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_09.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_37.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_23.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_22.obj
+Plane_Quad_T0.08_data/PartGeometry/Part_36.obj
+</PartGeometry>
+	</Output>
+	<Mitsuba>
+		<MitsubaData path="plane_bug4_data/mitsuba.xml" />
+	</Mitsuba>
+	<PartGeoData>
+		<CrossData path="Plane_Quad_T0.08_data/CrossMesh.xml" />
+	</PartGeoData>
+</Documents>

@@ -76,8 +76,7 @@
     ]
   },
   "packageFolders": {
-    "/Users/ziqwang/.nuget/packages/": {},
-    "/usr/local/share/dotnet/sdk/NuGetFallbackFolder": {}
+    "/Users/ziqwang/.nuget/packages/": {}
   },
   "project": {
     "version": "1.0.0",
@@ -88,9 +87,6 @@
       "packagesPath": "/Users/ziqwang/.nuget/packages/",
       "outputPath": "/Users/ziqwang/Documents/GitHub/TopoRhino/TopoGrasshopper/obj/",
       "projectStyle": "PackageReference",
-      "fallbackFolders": [
-        "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
-      ],
       "configFilePaths": [
         "/Users/ziqwang/.config/NuGet/NuGet.Config"
       ],

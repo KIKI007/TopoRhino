@@ -19,8 +19,4 @@
   <ItemGroup>
     <PackageReference Include="Grasshopper" Version="6.16.19190.7001" IncludeAssets="compile;build" />
   </ItemGroup>
-  
-  <ItemGroup>
-    <Compile Remove="Add.cs" />
-  </ItemGroup>
 </Project>

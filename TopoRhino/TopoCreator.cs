@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using System.Text;
 using System;
+using System.IO;
 using Rhino;
 using Rhino.Commands;
 
@@ -8,12 +9,13 @@ namespace TopoRhino
 {
   internal static class Import
   {
-#if _WINDOWS
-        public const string lib = "dllTopo.dll";
-#else
-        public const string lib = "libdllTopo.dylib";
-#endif
-    }
+       #if _WINDOWS
+       public const string lib = "dllTopo.dll";
+       #else
+       public const string lib = "libdllTopo.dylib";
+       #endif
+  
+}
     /// <summary>
     /// http://msdn.microsoft.com/en-us/library/aa288468(VS.71).aspx
     /// http://www.mono-project.com/docs/advanced/pinvoke/

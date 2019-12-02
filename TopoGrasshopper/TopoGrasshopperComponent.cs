@@ -88,7 +88,6 @@ namespace TopoGrasshopper
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
             String xml_file = "";
             Double tilt_angle = 0;
             Boolean preview_mode = true;

@@ -12,15 +12,19 @@
     <OutputPath>..\MacBin</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
+
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <OutputPath>..\MacBin</OutputPath>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
   </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Grasshopper" Version="6.16.19190.7001" IncludeAssets="compile;build" />
+  </ItemGroup>
+
   <ItemGroup>
     <Compile Include="../TopoRhino/CMesh.cs" />
     <Compile Include="../TopoRhino/TopoCreator.cs" />
-    <Compile Include="TopoGrasshopperComponent.cs" />
-    <Compile Include="TopoGrasshopperInfo.cs" />
-    <Compile Include="AssemblyInfo.cs" />
   </ItemGroup>
+  
 </Project>

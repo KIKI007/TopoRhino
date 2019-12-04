@@ -25,9 +25,9 @@ namespace TopoGrasshopper
         /// new tabs/panels will automatically be created.
         /// </summary>
         public XMLReader()
-          : base("TopoXMLReader", "TopoCreator",
+          : base("TopoXMLReader", "TopoXMLReader",
             "Construct an Topological Interlocking by XML Filename.",
-            "Topo", "IO")
+            "TopoCreator", "IO")
         {
             xmlPath = "";
         }

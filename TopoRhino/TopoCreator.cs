@@ -36,7 +36,7 @@ namespace TopoRhino
         internal static extern IntPtr initPolyMeshRhino(int partID, IntPtr data);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool isNull(IntPtr mesh);
+        internal static extern int isNull(IntPtr mesh);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool deletePolyMeshRhino(IntPtr mesh);
@@ -89,7 +89,8 @@ namespace TopoRhino
         public static bool GetBlockGeometry(int partID, Rhino.Geometry.Mesh rhino_mesh, IntPtr topoData)
         {
             IntPtr polymesh = initPolyMeshRhino(partID, topoData);
-            if(isNull(polymesh) == false)
+            int nullmesh = isNull(polymesh);
+            if(nullmesh == 0)
             {
                 int n_vertices = getNVertices(polymesh);
                 int n_faces = getNFaces(polymesh);

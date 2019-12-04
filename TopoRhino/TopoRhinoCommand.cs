@@ -54,7 +54,7 @@ namespace TopoRhino
             for (int partID = 0; partID < n_part; partID++)
             {
                 Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
-                TopoCreator.getMesh(partID, mesh, topoData);
+                TopoCreator.GetBlockGeometry(partID, mesh, topoData);
 
                 Guid mesh_guid = doc.Objects.AddMesh(mesh);
 
@@ -88,12 +88,12 @@ namespace TopoRhino
                 }
             }
 
-            Rhino.RhinoApp.RunScript("_SelMesh", false);
-            Rhino.RhinoApp.RunScript("_MeshToNURB", false);
-            Rhino.RhinoApp.RunScript("_SelMesh", false);
-            Rhino.RhinoApp.RunScript("_Delete", false);
-            Rhino.RhinoApp.RunScript("_SelPolysrf", false);
-            Rhino.RhinoApp.RunScript("_MergeAllFaces", false);
+            //Rhino.RhinoApp.RunScript("_SelMesh", false);
+            //Rhino.RhinoApp.RunScript("_MeshToNURB", false);
+            //Rhino.RhinoApp.RunScript("_SelMesh", false);
+            //Rhino.RhinoApp.RunScript("_Delete", false);
+            //Rhino.RhinoApp.RunScript("_SelPolysrf", false);
+            //Rhino.RhinoApp.RunScript("_MergeAllFaces", false);
 
             doc.Objects.UnselectAll();
             TopoCreator.deleteStructure(topoData);

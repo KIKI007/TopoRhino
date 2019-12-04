@@ -133,7 +133,7 @@ namespace TopoGrasshopper
             for(int partID = 0; partID < n_part; partID++)
             {
                 Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
-                TopoCreator.getMesh(partID, mesh, topoData);
+                TopoCreator.GetBlockGeometry(partID, mesh, topoData);
                 meshes.Add(mesh);  
             }
 

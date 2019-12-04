@@ -55,7 +55,7 @@
     <Compile Include="CMesh.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TopoCreator.cs" />
-    <Compile Include="TopoRhinoCommand.cs" />
+    <Compile Include="ReadTopoXMLCommand.cs" />
     <Compile Include="TopoRhinoPlugin.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

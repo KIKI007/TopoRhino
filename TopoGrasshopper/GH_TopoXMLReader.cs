@@ -10,7 +10,7 @@ using TopoRhino;
 
 namespace TopoGrasshopper
 {
-    public class XMLReader : GH_Component
+    public class GH_TopoXMLReader : GH_Component
     {
         //
         private IntPtr topoData;
@@ -24,7 +24,7 @@ namespace TopoGrasshopper
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public XMLReader()
+        public GH_TopoXMLReader()
           : base("TopoXMLReader", "TopoXMLReader",
             "Construct an Topological Interlocking by XML Filename.",
             "TopoCreator", "IO")
@@ -32,7 +32,7 @@ namespace TopoGrasshopper
             xmlPath = "";
         }
 
-        ~XMLReader()
+        ~GH_TopoXMLReader()
         {
             if (topoData != IntPtr.Zero)
             {

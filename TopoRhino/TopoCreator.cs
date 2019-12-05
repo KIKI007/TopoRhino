@@ -84,6 +84,15 @@ namespace TopoRhino
         internal static extern void setParaDouble(string name, double value, IntPtr topoData);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void setPatternAngle(double angle, IntPtr topoData);
+        
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void setPatternXY(double x, double y, IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void setPatternScale(double s, IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void refresh(IntPtr topoData);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

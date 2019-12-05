@@ -75,6 +75,34 @@ namespace TopoGrasshopper
                 }
                 TopoCreator.setParaDouble(name, cut_height, topoData);
             }
+            else if (name == "patternAngle")
+            {
+                double angle = 0;
+                if (!DA.GetData(2, ref angle)) return;
+                if(angle < -180 || angle > 180)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid " + name);
+                    return;
+                }
+                TopoCreator.setPatternAngle(angle, topoData);
+            }
+            else if (name == "patternXY")
+            {
+                Vector2f pos = new Vector2f();
+                if (!DA.GetData(2, ref pos)) return;
+                TopoCreator.setPatternXY(pos.X, pos.Y, topoData);
+            }
+            else if(name == "patternScale")
+            {
+                double scale = 0;
+                if (!DA.GetData(2, ref scale)) return;
+                if (scale < 0 || scale > 2)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid " + name);
+                    return;
+                }
+                TopoCreator.setPatternScale(scale, topoData);
+            }
 
             DA.SetData(0, topoData);
         }

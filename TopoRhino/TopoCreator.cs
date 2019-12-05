@@ -27,6 +27,9 @@ namespace TopoRhino
         internal static extern IntPtr readXML(string xmlpath);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr initStructure();
+       
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int deleteStructure(IntPtr topoData);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

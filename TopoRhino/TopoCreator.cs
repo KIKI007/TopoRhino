@@ -33,16 +33,31 @@ namespace TopoRhino
         internal static extern int deleteStructure(IntPtr topoData);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int partNumber(IntPtr topoData);
-
-        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern IntPtr initPolyMeshRhino(int partID, IntPtr data);
-
-        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int isNull(IntPtr mesh);
+        internal static extern int deletePolyLineRhino(IntPtr lines);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern bool deletePolyMeshRhino(IntPtr mesh);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int partNumber(IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr initPartMeshPtr(int partID, IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr initCrossMeshPtr(IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr initTextureMeshPtr(IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr initPatternMeshPtr(IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr initBaseMesh2DPtr(IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int isNull(IntPtr mesh);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int getNVertices(IntPtr mesh);
@@ -75,7 +90,7 @@ namespace TopoRhino
         internal static extern void copyFaceGroupI(IntPtr mesh, int fgID, IntPtr fg);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern bool isBoundary(int partID, IntPtr topoData);
+        internal static extern int isBoundary(int partID, IntPtr topoData);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern float ComputeGroundHeight(IntPtr topoData);
@@ -98,9 +113,22 @@ namespace TopoRhino
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void preview(IntPtr topoData);
 
-        public static bool GetBlockGeometry(int partID, Rhino.Geometry.Mesh rhino_mesh, IntPtr topoData)
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int getNPolyLines(IntPtr polylines);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int getNPolyLineI(IntPtr polylines, int lID);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void copyPolyLineI(IntPtr polylines, int lID, IntPtr points);
+
+
+
+
+
+        public static bool getPartMesh(int partID, Rhino.Geometry.Mesh rhino_mesh, IntPtr topoData)
         {
-            IntPtr polymesh = initPolyMeshRhino(partID, topoData);
+            IntPtr polymesh = initPartMeshPtr(partID, topoData);
             int nullmesh = isNull(polymesh);
             if(nullmesh == 0)
             {
@@ -163,6 +191,45 @@ namespace TopoRhino
                     rhino_mesh.Ngons.AddNgon(ngon); 
                 }
                 deletePolyMeshRhino(polymesh);
+                return true;
+            }
+            return false;
+        }
+
+        public static bool getPolyLines(List<Rhino.Geometry.Polyline> rhino_polylines, IntPtr pPolylines, bool flipYZ = true)
+        {
+            if(isNull(pPolylines) == 0)
+            {
+                int nPolyLines = getNPolyLines(pPolylines);
+                for(int id = 0; id < nPolyLines; id++)
+                {
+                    int nPolyLineI = getNPolyLineI(pPolylines, id);
+                    IntPtr pPoints = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(float)) * nPolyLineI * 3);
+                    copyPolyLineI(pPolylines, id, pPoints);
+                    float[] points = new float[3 * nPolyLineI];
+                    Marshal.Copy(pPoints, points, 0, 3 * nPolyLineI);
+                    Marshal.FreeHGlobal(pPoints);
+
+                    //use points to construct polylines
+                    List<Rhino.Geometry.Point3d> rhino_points = new List<Rhino.Geometry.Point3d>(nPolyLineI);
+                    for (int jd = 0; jd < nPolyLineI; jd++)
+                    {
+                        Rhino.Geometry.Point3d pt = new Rhino.Geometry.Point3d();
+                        if (flipYZ)
+                        {
+                            pt = new Rhino.Geometry.Point3d(points[jd * 3], -points[jd * 3 + 2], points[jd * 3 + 1]);
+                        }
+                        else
+                        {
+                            pt = new Rhino.Geometry.Point3d(points[jd * 3], points[jd * 3 + 1], points[jd * 3 + 2]);
+                        }
+                        
+                        rhino_points.Add(pt);
+                    }
+
+                    Rhino.Geometry.Polyline polyline = new Rhino.Geometry.Polyline(rhino_points);
+                    rhino_polylines.Add(polyline);
+                }
                 return true;
             }
             return false;

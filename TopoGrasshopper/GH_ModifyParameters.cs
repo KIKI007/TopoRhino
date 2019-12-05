@@ -88,7 +88,7 @@ namespace TopoGrasshopper
             }
             else if (name == "patternXY")
             {
-                Vector2f pos = new Vector2f();
+                Rhino.Geometry.Vector3d pos = new Rhino.Geometry.Vector3d();
                 if (!DA.GetData(2, ref pos)) return;
                 TopoCreator.setPatternXY(pos.X, pos.Y, topoData);
             }

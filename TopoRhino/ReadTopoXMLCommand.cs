@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Rhino;
 using Rhino.Commands;
 
@@ -15,6 +16,26 @@ namespace TopoRhino
         public override string EnglishName
         {
             get { return "ReadTopoXML"; }
+        }
+
+
+        private int getLayerOrCreate(Rhino.RhinoDoc doc, string name)
+        {
+            int layer_index = 0;
+            Rhino.DocObjects.Layer layer = doc.Layers.FindName(name);
+            Guid current_layer_guid = doc.Layers.CurrentLayer.Id;
+            if (layer == null)
+            {
+                Rhino.DocObjects.Layer newlayer = new Rhino.DocObjects.Layer();
+                newlayer.ParentLayerId = current_layer_guid;
+                newlayer.Name = name;
+                layer_index = doc.Layers.Add(newlayer);
+            }
+            else
+            {
+                layer_index = layer.Index;
+            }
+            return layer_index;
         }
 
         /// <summary>
@@ -36,25 +57,17 @@ namespace TopoRhino
             String xmlfile = fd.FileName;
             IntPtr topoData = TopoCreator.readXML(xmlfile);
             int n_part = TopoCreator.partNumber(topoData);
-            Guid current_layer_guid = doc.Layers.CurrentLayer.Id;
 
             //Part Layer
-            Rhino.DocObjects.Layer childlayer = new Rhino.DocObjects.Layer();
-            childlayer.ParentLayerId = current_layer_guid;
-            childlayer.Name = String.Format("Part");
-            int childpart_index = doc.Layers.Add(childlayer);
+            int partlayer_index = getLayerOrCreate(doc, "Part");
 
-            //Part Layer
-            childlayer = new Rhino.DocObjects.Layer();
-            childlayer.ParentLayerId = current_layer_guid;
-            childlayer.Name = String.Format("Boundary");
-            int childboundary_index = doc.Layers.Add(childlayer);
-
+            //Boundary Layer
+            int boundarylayer_index = getLayerOrCreate(doc, "Boundary");
 
             for (int partID = 0; partID < n_part; partID++)
             {
                 Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
-                TopoCreator.GetBlockGeometry(partID, mesh, topoData);
+                TopoCreator.getPartMesh(partID, mesh, topoData);
 
                 Guid mesh_guid = doc.Objects.AddMesh(mesh);
 
@@ -67,26 +80,42 @@ namespace TopoRhino
 
                 Rhino.DocObjects.RhinoObject obj = doc.Objects.Find(mesh_guid);
                 int mat_index;
-                if (TopoCreator.isBoundary(partID, topoData))
+                if (TopoCreator.isBoundary(partID, topoData) == 1)
                 {
                     mat_index = doc.Materials.Find("PlasterBoundary", false);
-                    obj.Attributes.LayerIndex = childboundary_index;
-                    //RhinoApp.WriteLine("{0}, {1}", partID, "PlasterBoundary");
+                    obj.Attributes.LayerIndex = boundarylayer_index;
                 }
                 else
                 {
                     mat_index = doc.Materials.Find("PlasterPart", false);
-                    obj.Attributes.LayerIndex = childpart_index;
-                    //RhinoApp.WriteLine("{0}, {1}", partID, "PlasterPart");
+                    obj.Attributes.LayerIndex = partlayer_index;
                 }
 
                 if (mat_index != -1)
                 {
                     obj.Attributes.MaterialIndex = mat_index;
                     obj.Attributes.MaterialSource = Rhino.DocObjects.ObjectMaterialSource.MaterialFromObject;
-                    obj.CommitChanges();
                 }
+                obj.CommitChanges();
             }
+
+            //CrossMesh
+
+            int crossMeshlayer_index = getLayerOrCreate(doc, "CrossMesh");
+
+            List<Rhino.Geometry.Polyline> polylines = new List<Rhino.Geometry.Polyline>();
+            IntPtr crossMesh = TopoCreator.initCrossMeshPtr(topoData);
+            TopoCreator.getPolyLines(polylines, crossMesh);
+            TopoCreator.deletePolyLineRhino(crossMesh);
+            for (int id = 0; id < polylines.Count; id++)
+            {
+                Guid polyline_guid = doc.Objects.AddPolyline(polylines[id]);
+
+                Rhino.DocObjects.RhinoObject obj = doc.Objects.Find(polyline_guid);
+                obj.Attributes.LayerIndex = crossMeshlayer_index;
+                obj.CommitChanges();
+            }
+                
 
             //Rhino.RhinoApp.RunScript("_SelMesh", false);
             //Rhino.RhinoApp.RunScript("_MeshToNURB", false);

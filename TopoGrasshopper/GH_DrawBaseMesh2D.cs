@@ -5,10 +5,9 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using TopoRhino;
-
 namespace TopoGrasshopper
 {
-    public class GH_DrawStructure : GH_Component
+    public class GH_DrawBaseMesh2D : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -17,12 +16,11 @@ namespace TopoGrasshopper
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public GH_DrawStructure()
-          : base("DrawStructure", "DrawStructure",
-            "Create the mesh of the structure",
+        public GH_DrawBaseMesh2D()
+          : base("DrawBaseMesh2D", "DrawBaseMesh2D",
+            "DrawBaseMesh2D",
             "TopoCreator", "Geometry")
         {
-
         }
 
         /// <summary>
@@ -31,8 +29,7 @@ namespace TopoGrasshopper
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("TopoPtr", "TopoPtr", "Pointer of a TopoCreator", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("Preview", "preview", "preview mode", GH_ParamAccess.item, true);
-            pManager[1].Optional = true;
+
         }
 
         /// <summary>
@@ -40,8 +37,7 @@ namespace TopoGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddMeshParameter("Part", "Part", "Internal Parts", GH_ParamAccess.list);
-            pManager.AddMeshParameter("Boundary", "Boundary", "Boundary Parts", GH_ParamAccess.list);
+            pManager.AddGenericParameter("PolyLines", "PolyLines", "CrossMesh composed of polylines", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -51,35 +47,14 @@ namespace TopoGrasshopper
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
             IntPtr topoData = IntPtr.Zero;
-            bool preview_mode = false;
             if (!DA.GetData(0, ref topoData)) return;
-            if (!DA.GetData(1, ref preview_mode)) return;
 
-            int n_part = TopoCreator.partNumber(topoData);
-   
-            if (preview_mode)
-                TopoCreator.preview(topoData);
-            else
-                TopoCreator.refresh(topoData);
-
-            List<Mesh> parts = new List<Mesh>();
-            List<Mesh> boundary = new List<Mesh>();
-            for (int partID = 0; partID < n_part; partID++)
-            {
-                Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
-                TopoCreator.getPartMesh(partID, mesh, topoData);
-                if(TopoCreator.isBoundary(partID, topoData) == 1){
-                    boundary.Add(mesh);
-                }
-                else{
-                    parts.Add(mesh);
-                }
-            }
-
-            DA.SetDataList(0, parts);
-            DA.SetDataList(1, boundary);
+            List<Polyline> polylines = new List<Polyline>();
+            IntPtr baseMesh2D = TopoCreator.initBaseMesh2DPtr(topoData);
+            TopoCreator.getPolyLines(polylines, baseMesh2D, false);
+            TopoCreator.deletePolyLineRhino(baseMesh2D);
+            DA.SetDataList(0, polylines);
         }
 
         /// <summary>
@@ -103,7 +78,7 @@ namespace TopoGrasshopper
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("271761eb-8da5-4f36-8f99-1d33318577fe"); }
+            get { return new Guid("9fa84d4d-052c-4ae7-9d22-2dfba58c0aae"); }
         }
     }
 }

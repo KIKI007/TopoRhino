@@ -57,6 +57,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="GH_DrawStructure.cs" />
+    <Compile Include="GH_InitTopo.cs" />
+    <Compile Include="GH_ModifyParameters.cs" />
     <Compile Include="GH_TopoXMLReader.cs" />
     <Compile Include="TopoGrasshopperInfo.cs" />
     <Compile Include="..\TopoRhino\CMesh.cs" />

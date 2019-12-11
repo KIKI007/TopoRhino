@@ -57,6 +57,9 @@ namespace TopoRhino
         internal static extern IntPtr initBaseMesh2DPtr(IntPtr topoData);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr initContact(IntPtr topoData);
+        
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int isNull(IntPtr mesh);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -122,78 +125,95 @@ namespace TopoRhino
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void copyPolyLineI(IntPtr polylines, int lID, IntPtr points);
 
-
-
-
-
         public static bool getPartMesh(int partID, Rhino.Geometry.Mesh rhino_mesh, IntPtr topoData)
         {
             IntPtr polymesh = initPartMeshPtr(partID, topoData);
             int nullmesh = isNull(polymesh);
-            if(nullmesh == 0)
+            if (nullmesh == 0)
             {
-                int n_vertices = getNVertices(polymesh);
-                int n_faces = getNFaces(polymesh);
-
-                //cmesh.points = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(CPoint)) * cmesh.n_vertices);
-                //cmesh.faces = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(CFace)) * cmesh.n_faces);
-
                 float ground_height = ComputeGroundHeight(topoData);
-                for (int id = 0; id < n_vertices; id++)
-                {
-                    IntPtr pPoint = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(float)) * 3);
-                    copyVertexI(polymesh, id, pPoint);
-                    Single[] point = new Single[3];
-                    Marshal.Copy(pPoint, point, 0, 3);
-                    rhino_mesh.Vertices.Add(point[0], -point[2], point[1] - ground_height);
-                    Marshal.FreeHGlobal(pPoint);
-                }
-
-                for (int id = 0; id < n_faces; id++)
-                {
-                    IntPtr pFace = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(int)) * 3);
-                    copyFaceI(polymesh, id, pFace);
-                    Int32[] face = new Int32[3];
-                    Marshal.Copy(pFace, face, 0, 3);
-                    rhino_mesh.Faces.AddFace(face[0], face[1], face[2]);
-                    Marshal.FreeHGlobal(pFace);
-                }
-
-
-                //create ngon mesh
-                int nngon = getNVertexGroup(polymesh);
-                for(int id = 0; id < nngon; id++)
-                {
-                    int[] meshFaceIndexList;
-                    int[] meshVertexIndexList;
-
-                    //face group
-                    {
-                        int nFaceGroupI = getNFaceGroupI(polymesh, id);
-                        IntPtr pFaceGroupI = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(int)) * nFaceGroupI);
-                        copyFaceGroupI(polymesh, id, pFaceGroupI);
-                        meshFaceIndexList = new int[nFaceGroupI];
-                        Marshal.Copy(pFaceGroupI, meshFaceIndexList, 0, nFaceGroupI);
-                        Marshal.FreeHGlobal(pFaceGroupI);
-                    }
-
-                    //vertex group
-                    {
-                        int nVertexGroupI = getNVertexGroupI(polymesh, id);
-                        IntPtr pVertexGroupI = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(int)) * nVertexGroupI);
-                        copyVertexGroupI(polymesh, id, pVertexGroupI);
-                        meshVertexIndexList = new int[nVertexGroupI];
-                        Marshal.Copy(pVertexGroupI, meshVertexIndexList, 0, nVertexGroupI);
-                        Marshal.FreeHGlobal(pVertexGroupI);
-                    }
-
-                    Rhino.Geometry.MeshNgon ngon = Rhino.Geometry.MeshNgon.Create(meshVertexIndexList, meshFaceIndexList);
-                    rhino_mesh.Ngons.AddNgon(ngon); 
-                }
+                getMesh(polymesh, ground_height, rhino_mesh);
                 deletePolyMeshRhino(polymesh);
                 return true;
+
             }
             return false;
+        }
+
+        public static bool getContactMesh(Rhino.Geometry.Mesh rhino_mesh, IntPtr topoData)
+        {
+            IntPtr contacMesh = initContact(topoData);
+            int nullmesh = isNull(contacMesh);
+            if (nullmesh == 0)
+            {
+                float ground_height = ComputeGroundHeight(topoData);
+                getMesh(contacMesh, ground_height, rhino_mesh);
+                deletePolyMeshRhino(contacMesh);
+                return true;
+
+            }
+            return false;
+        }
+
+        public static void getMesh(IntPtr polymesh, float ground_height, Rhino.Geometry.Mesh rhino_mesh)
+        {
+            int n_vertices = getNVertices(polymesh);
+            int n_faces = getNFaces(polymesh);
+
+            //cmesh.points = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(CPoint)) * cmesh.n_vertices);
+            //cmesh.faces = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(CFace)) * cmesh.n_faces);
+
+
+            for (int id = 0; id < n_vertices; id++)
+            {
+                IntPtr pPoint = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(float)) * 3);
+                copyVertexI(polymesh, id, pPoint);
+                Single[] point = new Single[3];
+                Marshal.Copy(pPoint, point, 0, 3);
+                rhino_mesh.Vertices.Add(point[0], -point[2], point[1] - ground_height);
+                Marshal.FreeHGlobal(pPoint);
+            }
+
+            for (int id = 0; id < n_faces; id++)
+            {
+                IntPtr pFace = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(int)) * 3);
+                copyFaceI(polymesh, id, pFace);
+                Int32[] face = new Int32[3];
+                Marshal.Copy(pFace, face, 0, 3);
+                rhino_mesh.Faces.AddFace(face[0], face[1], face[2]);
+                Marshal.FreeHGlobal(pFace);
+            }
+
+            //create ngon mesh
+            int nngon = getNVertexGroup(polymesh);
+            for (int id = 0; id < nngon; id++)
+            {
+                int[] meshFaceIndexList;
+                int[] meshVertexIndexList;
+
+                //face group
+                {
+                    int nFaceGroupI = getNFaceGroupI(polymesh, id);
+                    IntPtr pFaceGroupI = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(int)) * nFaceGroupI);
+                    copyFaceGroupI(polymesh, id, pFaceGroupI);
+                    meshFaceIndexList = new int[nFaceGroupI];
+                    Marshal.Copy(pFaceGroupI, meshFaceIndexList, 0, nFaceGroupI);
+                    Marshal.FreeHGlobal(pFaceGroupI);
+                }
+
+                //vertex group
+                {
+                    int nVertexGroupI = getNVertexGroupI(polymesh, id);
+                    IntPtr pVertexGroupI = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(int)) * nVertexGroupI);
+                    copyVertexGroupI(polymesh, id, pVertexGroupI);
+                    meshVertexIndexList = new int[nVertexGroupI];
+                    Marshal.Copy(pVertexGroupI, meshVertexIndexList, 0, nVertexGroupI);
+                    Marshal.FreeHGlobal(pVertexGroupI);
+                }
+
+                Rhino.Geometry.MeshNgon ngon = Rhino.Geometry.MeshNgon.Create(meshVertexIndexList, meshFaceIndexList);
+                rhino_mesh.Ngons.AddNgon(ngon);
+            }
         }
 
         public static bool getPolyLines(List<Rhino.Geometry.Polyline> rhino_polylines, IntPtr pPolylines, bool flipYZ = true)

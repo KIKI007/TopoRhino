@@ -28,9 +28,11 @@ namespace TopoGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddMeshParameter("Meshes", "Meshes", "a list of rhino meshes", GH_ParamAccess.list);
+            pManager.AddMeshParameter("Meshes", "Parts", "a list of rhino meshes which are not boundary", GH_ParamAccess.list);
 
-            pManager.AddBooleanParameter("AtBoundary", "AtBoundary", "a list of bool: whether meshes are at boundary", GH_ParamAccess.list);
+            pManager.AddMeshParameter("Meshes", "Boundaries", "a list of rhino meshes which at at boundary of the structure", GH_ParamAccess.list);
+
+            pManager[1].Optional = true;
         }
 
         /// <summary>
@@ -49,67 +51,74 @@ namespace TopoGrasshopper
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
-            List<Rhino.Geometry.Mesh> meshes = new List<Mesh>();
-            List<bool> atBoundary = new List<bool>();
-            if (!DA.GetDataList(0, meshes)) return;
-            if (!DA.GetDataList(1, atBoundary)) return;
-
-            if(meshes.Count != atBoundary.Count)
-            {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "The size of Meshes and atBoundary is not equal!");
-                return;
-            }
+            List<Mesh> parts = new List<Mesh>();
+            List<Mesh> brdies = new List<Mesh>();
+            if (!DA.GetDataList(0, parts)) return;
+            DA.GetDataList(1, brdies);
 
             IntPtr graphData = TopoCreator.initContactGraph();
 
-            for (int kd = 0; kd < meshes.Count; kd++)
+            for (int kd = 0; kd < parts.Count; kd++)
             {
-                var mesh = meshes[kd];
-                CMesh cmesh = new CMesh();
+                var mesh = parts[kd];
+                addToContactGraph(mesh, false, graphData);
+            }
 
-                cmesh.n_vertices = mesh.Vertices.Count;
-                cmesh.n_faces = mesh.Faces.Count;
-
-                if(cmesh.n_vertices * 3 >= Constants.MAXIMUM_MESHSIZE || cmesh.n_faces * 3 >= Constants.MAXIMUM_MESHSIZE)
-                {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Exceed maximum mesh size!");
-                    return;
-                }
-
-                cmesh.points = new float[cmesh.n_vertices * 3];
-                cmesh.faces = new int[cmesh.n_faces * 3];
-
-                for (int id = 0; id < mesh.Vertices.Count; id++)
-                {
-                    cmesh.points[id * 3] = mesh.Vertices[id].X;
-                    cmesh.points[id * 3 + 1] = mesh.Vertices[id].Y;
-                    cmesh.points[id * 3 + 2] = mesh.Vertices[id].Z;
-                }
-
-                for (int id = 0; id < mesh.Faces.Count; id++)
-                {
-                    if (mesh.Faces[id].IsTriangle)
-                    {
-                        cmesh.faces[id * 3] = mesh.Faces[id].A;
-                        cmesh.faces[id * 3 + 1] = mesh.Faces[id].B;
-                        cmesh.faces[id * 3 + 2] = mesh.Faces[id].C;
-                    }
-                    else
-                    {
-                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Mesh has Quad Faces!");
-                        return;
-                    }
-                }
-                TopoCreator.addMeshesToContactGraph(graphData, ref cmesh, atBoundary[kd]);
+            for(int kd = 0; kd < brdies.Count; kd++)
+            {
+                var mesh = brdies[kd];
+                addToContactGraph(mesh, true, graphData);
             }
 
             Rhino.Geometry.Mesh rhmesh = new Rhino.Geometry.Mesh();
             TopoCreator.getContactMesh(rhmesh, graphData);
             DA.SetData(0, rhmesh);
+
             TopoCreator.deleteContactGraph(graphData);
 
             return;
         }
+
+        private void addToContactGraph(Mesh mesh, bool atBoundary, IntPtr graphData)
+        {
+            CMesh cmesh = new CMesh();
+
+            cmesh.n_vertices = mesh.Vertices.Count;
+            cmesh.n_faces = mesh.Faces.Count;
+
+            if (cmesh.n_vertices * 3 >= Constants.MAXIMUM_MESHSIZE || cmesh.n_faces * 3 >= Constants.MAXIMUM_MESHSIZE)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Exceed maximum mesh size!");
+                return;
+            }
+
+            cmesh.points = new float[cmesh.n_vertices * 3];
+            cmesh.faces = new int[cmesh.n_faces * 3];
+
+            for (int id = 0; id < mesh.Vertices.Count; id++)
+            {
+                cmesh.points[id * 3] = mesh.Vertices[id].X;
+                cmesh.points[id * 3 + 1] = mesh.Vertices[id].Y;
+                cmesh.points[id * 3 + 2] = mesh.Vertices[id].Z;
+            }
+
+            for (int id = 0; id < mesh.Faces.Count; id++)
+            {
+                if (mesh.Faces[id].IsTriangle)
+                {
+                    cmesh.faces[id * 3] = mesh.Faces[id].A;
+                    cmesh.faces[id * 3 + 1] = mesh.Faces[id].B;
+                    cmesh.faces[id * 3 + 2] = mesh.Faces[id].C;
+                }
+                else
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Mesh has Quad Faces!");
+                    return;
+                }
+            }
+            TopoCreator.addMeshesToContactGraph(graphData, ref cmesh, atBoundary);
+        }
+
 
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

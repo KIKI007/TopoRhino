@@ -75,6 +75,17 @@ namespace TopoGrasshopper
                 }
                 TopoCreator.setParaDouble(name, cut_height, topoData);
             }
+            else if(name == "patternID")
+            {
+                double type = 0;
+                if (!DA.GetData(2, ref type)) return;
+                if (type < 0 || type > 15)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid " + name);
+                    return;
+                }
+                TopoCreator.setParaInt(name, (int)type, topoData);
+            }
             else if (name == "patternAngle")
             {
                 double angle = 0;

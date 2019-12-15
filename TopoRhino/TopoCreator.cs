@@ -28,9 +28,15 @@ namespace TopoRhino
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr initStructure();
-       
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern IntPtr initContactGraph();
+
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int deleteStructure(IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int deleteContactGraph(IntPtr topoData);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int deletePolyLineRhino(IntPtr lines);
@@ -57,7 +63,7 @@ namespace TopoRhino
         internal static extern IntPtr initBaseMesh2DPtr(IntPtr topoData);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
-        internal static extern IntPtr initContact(IntPtr topoData);
+        internal static extern IntPtr initContactMesh(IntPtr graphData);
         
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int isNull(IntPtr mesh);
@@ -102,6 +108,9 @@ namespace TopoRhino
         internal static extern void setParaDouble(string name, double value, IntPtr topoData);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void setParaInt(string name, int value, IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void setPatternAngle(double angle, IntPtr topoData);
         
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -115,6 +124,9 @@ namespace TopoRhino
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void preview(IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void addMeshesToContactGraph(IntPtr graphData, [In, Out] ref CMesh mesh, bool brdy);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int getNPolyLines(IntPtr polylines);
@@ -140,14 +152,13 @@ namespace TopoRhino
             return false;
         }
 
-        public static bool getContactMesh(Rhino.Geometry.Mesh rhino_mesh, IntPtr topoData)
+        public static bool getContactMesh(Rhino.Geometry.Mesh rhino_mesh, IntPtr graphData)
         {
-            IntPtr contacMesh = initContact(topoData);
+            IntPtr contacMesh = initContactMesh(graphData);
             int nullmesh = isNull(contacMesh);
             if (nullmesh == 0)
             {
-                float ground_height = ComputeGroundHeight(topoData);
-                getMesh(contacMesh, ground_height, rhino_mesh);
+                getMesh(contacMesh, 0, rhino_mesh, false);
                 deletePolyMeshRhino(contacMesh);
                 return true;
 
@@ -155,7 +166,11 @@ namespace TopoRhino
             return false;
         }
 
-        public static void getMesh(IntPtr polymesh, float ground_height, Rhino.Geometry.Mesh rhino_mesh)
+        public static void getMesh(
+            IntPtr polymesh,
+            float ground_height,
+            Rhino.Geometry.Mesh rhino_mesh,
+            bool flipYZ = true)
         {
             int n_vertices = getNVertices(polymesh);
             int n_faces = getNFaces(polymesh);
@@ -170,7 +185,10 @@ namespace TopoRhino
                 copyVertexI(polymesh, id, pPoint);
                 Single[] point = new Single[3];
                 Marshal.Copy(pPoint, point, 0, 3);
-                rhino_mesh.Vertices.Add(point[0], -point[2], point[1] - ground_height);
+                if(flipYZ)
+                    rhino_mesh.Vertices.Add(point[0], -point[2], point[1] - ground_height);
+                else
+                    rhino_mesh.Vertices.Add(point[0], point[1], point[2]);
                 Marshal.FreeHGlobal(pPoint);
             }
 

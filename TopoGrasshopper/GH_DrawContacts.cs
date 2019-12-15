@@ -7,7 +7,7 @@ using Rhino.Geometry;
 using TopoRhino;
 namespace TopoGrasshopper
 {
-    public class GH_DrawContacts : GH_Component
+    public class GH_ComputeContacts : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -16,9 +16,9 @@ namespace TopoGrasshopper
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public GH_DrawContacts()
+        public GH_ComputeContacts()
           : base("DrawContacts", "DrawContacts",
-            "Draw all contacts of the structure mesh",
+            "Compute the contacts from a list of rhino mesh",
             "TopoCreator", "Geometry")
         {
         }
@@ -28,7 +28,9 @@ namespace TopoGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("TopoPtr", "TopoPtr", "Pointer of a TopoCreator", GH_ParamAccess.item);
+            pManager.AddMeshParameter("Meshes", "Meshes", "a list of rhino meshes", GH_ParamAccess.list);
+
+            pManager.AddBooleanParameter("AtBoundary", "AtBoundary", "a list of bool: whether meshes are at boundary", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -36,7 +38,7 @@ namespace TopoGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddMeshParameter("Contact", "Contact", "Contact", GH_ParamAccess.item);
+            pManager.AddMeshParameter("Contact", "Contact", "A mesh for contact", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -46,13 +48,67 @@ namespace TopoGrasshopper
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            IntPtr topoData = IntPtr.Zero;
-            if (!DA.GetData(0, ref topoData)) return;
 
-            Rhino.Geometry.Mesh mesh = new Rhino.Geometry.Mesh();
-            TopoCreator.getContactMesh(mesh, topoData);
+            List<Rhino.Geometry.Mesh> meshes = new List<Mesh>();
+            List<bool> atBoundary = new List<bool>();
+            if (!DA.GetDataList(0, meshes)) return;
+            if (!DA.GetDataList(1, atBoundary)) return;
 
-            DA.SetData(0, mesh);
+            if(meshes.Count != atBoundary.Count)
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "The size of Meshes and atBoundary is not equal!");
+                return;
+            }
+
+            IntPtr graphData = TopoCreator.initContactGraph();
+
+            for (int kd = 0; kd < meshes.Count; kd++)
+            {
+                var mesh = meshes[kd];
+                CMesh cmesh = new CMesh();
+
+                cmesh.n_vertices = mesh.Vertices.Count;
+                cmesh.n_faces = mesh.Faces.Count;
+
+                if(cmesh.n_vertices * 3 >= Constants.MAXIMUM_MESHSIZE || cmesh.n_faces * 3 >= Constants.MAXIMUM_MESHSIZE)
+                {
+                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Exceed maximum mesh size!");
+                    return;
+                }
+
+                cmesh.points = new float[cmesh.n_vertices * 3];
+                cmesh.faces = new int[cmesh.n_faces * 3];
+
+                for (int id = 0; id < mesh.Vertices.Count; id++)
+                {
+                    cmesh.points[id * 3] = mesh.Vertices[id].X;
+                    cmesh.points[id * 3 + 1] = mesh.Vertices[id].Y;
+                    cmesh.points[id * 3 + 2] = mesh.Vertices[id].Z;
+                }
+
+                for (int id = 0; id < mesh.Faces.Count; id++)
+                {
+                    if (mesh.Faces[id].IsTriangle)
+                    {
+                        cmesh.faces[id * 3] = mesh.Faces[id].A;
+                        cmesh.faces[id * 3 + 1] = mesh.Faces[id].B;
+                        cmesh.faces[id * 3 + 2] = mesh.Faces[id].C;
+                    }
+                    else
+                    {
+                        AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Mesh has Quad Faces!");
+                        return;
+                    }
+                }
+                TopoCreator.addMeshesToContactGraph(graphData, ref cmesh, atBoundary[kd]);
+            }
+
+            Rhino.Geometry.Mesh rhmesh = new Rhino.Geometry.Mesh();
+            TopoCreator.getContactMesh(rhmesh, graphData);
+            DA.SetData(0, rhmesh);
+            TopoCreator.deleteContactGraph(graphData);
+
+            return;
         }
 
         /// <summary>
@@ -76,7 +132,7 @@ namespace TopoGrasshopper
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("351fa438-7214-41b0-9599-f7dc6dfcd2e3"); }
+            get { return new Guid("5cd6133b-aae6-40d0-8aa9-e165c0a3a4b3"); }
         }
     }
 }

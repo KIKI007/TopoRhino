@@ -3,35 +3,19 @@ using System.Runtime.InteropServices;
 
 namespace TopoRhino
 {
-    [StructLayout(LayoutKind.Sequential)]
-    struct CPoint
+    static class Constants
     {
-        public CPoint(float _x, float _y, float _z)
-        {
-            x = _x;
-            y = _y;
-            z = _z;
-        }
-        public float x, y, z;
+        public const int MAXIMUM_MESHSIZE = 4096;
     }
-
-    [StructLayout(LayoutKind.Sequential)]
-    struct CFace
-    {
-        public CFace(int _a, int _b, int _c)
-        {
-            a = _a;
-            b = _b;
-            c = _c;
-        }
-        public int a, b, c;
-    }
+    
 
     [StructLayout(LayoutKind.Sequential)]
     struct CMesh
     {
-        public IntPtr points;
-        public IntPtr faces;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAXIMUM_MESHSIZE)]
+        public float[] points;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = Constants.MAXIMUM_MESHSIZE)]
+        public int[] faces;
         public int n_vertices;
         public int n_faces;
     }

@@ -126,6 +126,9 @@ namespace TopoRhino
         internal static extern void preview(IntPtr topoData);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void setCrossMesh(ref CPolyLines polylines, IntPtr topoData, bool haveBoundary);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void addMeshesToContactGraph(IntPtr graphData, [In, Out] ref CMesh mesh, bool brdy);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]

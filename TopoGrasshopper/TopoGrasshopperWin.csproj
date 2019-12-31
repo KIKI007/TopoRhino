@@ -59,11 +59,15 @@
     <Compile Include="AssemblyInfo.cs" />
     <Compile Include="GH_Draw2DTextureMesh.cs" />
     <Compile Include="GH_DrawBaseMesh2D.cs" />
+    <Compile Include="GH_DrawContacts.cs" />
     <Compile Include="GH_DrawCrossMesh.cs" />
     <Compile Include="GH_DrawPatternMesh.cs" />
     <Compile Include="GH_DrawStructure.cs" />
     <Compile Include="GH_InitTopo.cs" />
+    <Compile Include="GH_ModifyCrossMesh.cs" />
     <Compile Include="GH_ModifyParameters.cs" />
+    <Compile Include="GH_ModifyPattern.cs" />
+    <Compile Include="GH_ModifyReferenceMesh.cs" />
     <Compile Include="GH_TopoXMLReader.cs" />
     <Compile Include="TopoGrasshopperInfo.cs" />
     <Compile Include="..\TopoRhino\CMesh.cs" />

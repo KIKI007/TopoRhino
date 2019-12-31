@@ -74,7 +74,7 @@ namespace TopoGrasshopper
             }
             else
             {
-                TopoCreator.setCrossMesh(ref polyLines, topoData, false);
+                TopoCreator.setCrossMesh(ref polyLines, topoData, true);
             }
 
             Marshal.FreeHGlobal(polyLines.atBoundary);

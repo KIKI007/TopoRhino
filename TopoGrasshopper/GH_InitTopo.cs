@@ -25,7 +25,7 @@ namespace TopoGrasshopper
             "Init a TopoCreator Pointer",
             "TopoCreator", "IO")
         {
-            topoData = TopoCreator.initStructure();
+            topoData = IntPtr.Zero;
         }
 
         ~GH_InitTopo()
@@ -41,6 +41,8 @@ namespace TopoGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            pManager.AddBooleanParameter("reset", "reset", "reset", GH_ParamAccess.item, false);
+            pManager[0].Optional = true;
         }
 
         /// <summary>
@@ -59,6 +61,17 @@ namespace TopoGrasshopper
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            bool resetCommand = false;
+            DA.GetData(0, ref resetCommand);
+            if (resetCommand)
+            {
+                if(topoData != IntPtr.Zero)
+                {
+                    TopoCreator.deleteStructure(topoData);
+                }
+                topoData = TopoCreator.initStructure();
+            }
+
             DA.SetData(0, topoData);
         }
 

@@ -129,6 +129,12 @@ namespace TopoRhino
         internal static extern void setCrossMesh(ref CPolyLines polylines, IntPtr topoData, bool haveBoundary);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void setReferenceSurface(ref CMesh cmesh, IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void setPattern(ref CPolyLines polylines, IntPtr topoData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern void addMeshesToContactGraph(IntPtr graphData, [In, Out] ref CMesh mesh, bool brdy);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -275,5 +281,59 @@ namespace TopoRhino
             }
             return false;
         }
+
+        public static bool RhinoMeshtoCMesh(
+            Rhino.Geometry.Mesh mesh,
+            ref CMesh outMesh,
+            bool flipYZ,
+            out String errorMessage)
+        {
+            outMesh = new CMesh();
+
+            if (mesh.Vertices.Count * 3 >= Constants.MAXIMUM_MESHSIZE || mesh.Faces.Count * 3 >= Constants.MAXIMUM_MESHSIZE)
+            {
+                errorMessage = "Exceed maximum mesh size!";
+                return false;
+            }
+
+            outMesh.n_vertices = mesh.Vertices.Count;
+            outMesh.n_faces = mesh.Faces.Count;
+
+            outMesh.points = new float[outMesh.n_vertices * 3];
+            outMesh.faces = new int[outMesh.n_faces * 3];
+
+            for (int id = 0; id < mesh.Vertices.Count; id++)
+            {
+                outMesh.points[id * 3] = mesh.Vertices[id].X;
+                if (flipYZ)
+                {
+                    outMesh.points[id * 3 + 1] = mesh.Vertices[id].Z;
+                    outMesh.points[id * 3 + 2] = -mesh.Vertices[id].Y;
+                }
+                else
+                {
+                    outMesh.points[id * 3 + 1] = mesh.Vertices[id].Y;
+                    outMesh.points[id * 3 + 2] = mesh.Vertices[id].Z;
+                }
+            }
+
+            for (int id = 0; id < mesh.Faces.Count; id++)
+            {
+                if (mesh.Faces[id].IsTriangle)
+                {
+                    outMesh.faces[id * 3] = mesh.Faces[id].A;
+                    outMesh.faces[id * 3 + 1] = mesh.Faces[id].B;
+                    outMesh.faces[id * 3 + 2] = mesh.Faces[id].C;
+                }
+                else
+                {
+                    errorMessage = "Mesh has Quad Faces!";
+                    return false;
+                }
+            }
+            errorMessage = "";
+            return true;
+        }
+
     }
 }

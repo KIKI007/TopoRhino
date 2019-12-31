@@ -23,6 +23,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Remove="GH_ModifyCrossMesh %28copy%29.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="../TopoRhino/CMesh.cs" />
     <Compile Include="../TopoRhino/TopoCreator.cs" />
   </ItemGroup>

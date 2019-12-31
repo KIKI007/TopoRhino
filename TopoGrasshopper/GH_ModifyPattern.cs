@@ -5,10 +5,9 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 using TopoRhino;
-
 namespace TopoGrasshopper
 {
-    public class GH_ModifyCrossMesh : GH_Component
+    public class GH_ModifyPattern : GH_Component
     {
         /// <summary>
         /// Each implementation of GH_Component must provide a public 
@@ -17,9 +16,9 @@ namespace TopoGrasshopper
         /// Subcategory the panel. If you use non-existing tab or panel names, 
         /// new tabs/panels will automatically be created.
         /// </summary>
-        public GH_ModifyCrossMesh()
-          : base("ModifyCrossMesh", "ModifyCrossMesh",
-            "Modify the cross mesh of the TopoCreator",
+        public GH_ModifyPattern()
+          : base("ModifyPattern", "ModifyPattern",
+            "Modify the 2D pattern",
             "TopoCreator", "Utility")
         {
         }
@@ -29,14 +28,8 @@ namespace TopoGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-
             pManager.AddGenericParameter("a pointer of TopoCreator", "TopoPtr", "a pointer of TopoCreator", GH_ParamAccess.item);
-
-            pManager.AddGenericParameter("Crosses", "Parts", "a list of rhino polylines which are not boundary", GH_ParamAccess.list);
-
-            pManager.AddGenericParameter("Crosses", "Boundaries", "a list of rhino polylines which at at boundary of the structure", GH_ParamAccess.list);
-
-            pManager[2].Optional = true;
+            pManager.AddGenericParameter("pattern line", "PolyLines", "a list of pattern line", GH_ParamAccess.list);
         }
 
         /// <summary>
@@ -45,6 +38,7 @@ namespace TopoGrasshopper
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("a pointer of TopoCreator", "TopoPtr", "a pointer of TopoCreator", GH_ParamAccess.item);
+
         }
 
         /// <summary>
@@ -54,23 +48,19 @@ namespace TopoGrasshopper
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
             IntPtr topoData = IntPtr.Zero;
-            List<Curve> parts = new List<Curve>();
-            List<Curve> boundaries = new List<Curve>();
+            List<Curve> pattern = new List<Curve>();
 
             if (!DA.GetData(0, ref topoData)) return;
-            if (!DA.GetDataList(1, parts)) return;
-            DA.GetDataList(2, boundaries);
+            if (!DA.GetDataList(1, pattern)) return;
 
             CPolyLines polylines = new CPolyLines();
             List<float> points = new List<float>();
             List<int> sta_ends = new List<int>();
-            List<int> atBoundary = new List<int>();
 
             //Add Parts
             int count = 0;
-            foreach(var curve in parts)
+            foreach (var curve in pattern)
             {
                 int sta = count;
                 Polyline polyline;
@@ -79,45 +69,20 @@ namespace TopoGrasshopper
                 for (int id = 0; id < polyline.Count - 1; id++)
                 {
                     Point3d pt = polyline[id];
-                    //flip YZ because the coordianate systems of rhino and C++ are different
                     points.Add((float)pt.X);
+                    points.Add((float)pt.Y);
                     points.Add((float)pt.Z);
-                    points.Add(-(float)pt.Y);
                     count++;
                 }
                 int end = count - 1;
                 sta_ends.Add(sta);
-                sta_ends.Add(end);
-                atBoundary.Add(0);
+                sta_ends.Add(end); 
             }
 
-
-            //Add Boundries
-            foreach (var curve in boundaries)
-            {
-                int sta = count;
-                Polyline polyline;
-                curve.TryGetPolyline(out polyline);
-
-                for (int id = 0; id < polyline.Count - 1; id++)
-                {
-                    Point3d pt = polyline[id];
-                    //flip YZ because the coordianate systems of rhino and C++ are different
-                    points.Add((float)pt.X);
-                    points.Add((float)pt.Z);
-                    points.Add(-(float)pt.Y);
-                    count++;
-                }
-                int end = count - 1;
-                sta_ends.Add(sta);
-                sta_ends.Add(end);
-                atBoundary.Add(1);
-            }
-
-            if (sta_ends.Count > Constants.MAXIMUM_POLYLINE_FACE ||
+            if(sta_ends.Count > Constants.MAXIMUM_POLYLINE_FACE ||
                 points.Count > Constants.MAXIMUM_POLYLINE_POINTS)
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "CrossMesh size exceeds the software's capacity");
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Pattern size exceeds the software's capacity");
                 return;
             }
 
@@ -133,25 +98,12 @@ namespace TopoGrasshopper
             for (int id = 0; id < sta_ends.Count; id++)
                 polylines.sta_ends[id] = sta_ends[id];
 
+            
 
-            if (boundaries.Count == 0)
-            {
-                TopoCreator.setCrossMesh(ref polylines, topoData, false);
-            }
-            else
-            {
-                polylines.atBoundary = new int[atBoundary.Count];
-                for (int id = 0; id < atBoundary.Count; id++)
-                    polylines.atBoundary[id] = atBoundary[id];
-
-                TopoCreator.setCrossMesh(ref polylines, topoData, true);
-            }
+            TopoCreator.setPattern(ref polylines, topoData);
 
             DA.SetData(0, topoData);
-            return;
         }
-
-
 
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
@@ -174,7 +126,7 @@ namespace TopoGrasshopper
         /// </summary>
         public override Guid ComponentGuid
         {
-            get { return new Guid("a56c72d8-0e89-42d7-b04c-d6776d8a9204"); }
+            get { return new Guid("c72882d3-383a-4378-a203-28665ba44620"); }
         }
     }
 }

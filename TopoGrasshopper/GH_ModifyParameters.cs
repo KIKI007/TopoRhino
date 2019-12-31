@@ -107,7 +107,7 @@ namespace TopoGrasshopper
             {
                 double scale = 0;
                 if (!DA.GetData(2, ref scale)) return;
-                if (scale < 0 || scale > 2)
+                if (scale < 0 || scale > 5)
                 {
                     AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Invalid " + name);
                     return;

@@ -5,9 +5,9 @@ namespace TopoRhino
 {
     static class Constants
     {
-        public const int MAXIMUM_MESHSIZE = 4096;
-        public const int MAXIMUM_POLYLINE_POINTS = 10000;
-        public const int MAXIMUM_POLYLINE_FACE = 1000;
+        public const int MAXIMUM_MESHSIZE = 100000;
+        public const int MAXIMUM_POLYLINE_POINTS = 100000;
+        public const int MAXIMUM_POLYLINE_FACE = 100000;
     }
     
 

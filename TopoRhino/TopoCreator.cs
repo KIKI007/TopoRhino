@@ -4,6 +4,7 @@ using System;
 using System.IO;
 using Rhino;
 using Rhino.Commands;
+using Rhino.Geometry;
 using System.Collections.Generic;
 
 namespace TopoRhino
@@ -178,7 +179,7 @@ namespace TopoRhino
         public static void getMesh(
             IntPtr polymesh,
             float ground_height,
-            Rhino.Geometry.Mesh rhino_mesh,
+            Mesh rhino_mesh,
             bool flipYZ = true)
         {
             int n_vertices = getNVertices(polymesh);
@@ -282,48 +283,45 @@ namespace TopoRhino
             return false;
         }
 
-        public static bool RhinoMeshtoCMesh(
-            Rhino.Geometry.Mesh mesh,
+        public static bool RhinoMeshToCMesh(
+            Mesh mesh,
             ref CMesh outMesh,
             bool flipYZ,
             out String errorMessage)
         {
             outMesh = new CMesh();
 
-            if (mesh.Vertices.Count * 3 >= Constants.MAXIMUM_MESHSIZE || mesh.Faces.Count * 3 >= Constants.MAXIMUM_MESHSIZE)
-            {
-                errorMessage = "Exceed maximum mesh size!";
-                return false;
-            }
-
             outMesh.n_vertices = mesh.Vertices.Count;
             outMesh.n_faces = mesh.Faces.Count;
 
-            outMesh.points = new float[outMesh.n_vertices * 3];
-            outMesh.faces = new int[outMesh.n_faces * 3];
+            outMesh.points = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(float)) * outMesh.n_vertices * 3);
+            outMesh.faces = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(int)) * outMesh.n_faces * 3);
 
+            float[] points = new float[outMesh.n_vertices * 3];
             for (int id = 0; id < mesh.Vertices.Count; id++)
             {
-                outMesh.points[id * 3] = mesh.Vertices[id].X;
+                points[id * 3] = mesh.Vertices[id].X;
                 if (flipYZ)
                 {
-                    outMesh.points[id * 3 + 1] = mesh.Vertices[id].Z;
-                    outMesh.points[id * 3 + 2] = -mesh.Vertices[id].Y;
+                    points[id * 3 + 1] = mesh.Vertices[id].Z;
+                    points[id * 3 + 2] = -mesh.Vertices[id].Y;
                 }
                 else
                 {
-                    outMesh.points[id * 3 + 1] = mesh.Vertices[id].Y;
-                    outMesh.points[id * 3 + 2] = mesh.Vertices[id].Z;
+                    points[id * 3 + 1] = mesh.Vertices[id].Y;
+                    points[id * 3 + 2] = mesh.Vertices[id].Z;
                 }
             }
+            Marshal.Copy(points, 0, outMesh.points, outMesh.n_vertices * 3);
 
+            int[] faces = new int[outMesh.n_faces * 3];
             for (int id = 0; id < mesh.Faces.Count; id++)
             {
                 if (mesh.Faces[id].IsTriangle)
                 {
-                    outMesh.faces[id * 3] = mesh.Faces[id].A;
-                    outMesh.faces[id * 3 + 1] = mesh.Faces[id].B;
-                    outMesh.faces[id * 3 + 2] = mesh.Faces[id].C;
+                    faces[3 * id] = mesh.Faces[id].A;
+                    faces[3 * id + 1] = mesh.Faces[id].B;
+                    faces[3 * id + 2] = mesh.Faces[id].C;
                 }
                 else
                 {
@@ -331,9 +329,103 @@ namespace TopoRhino
                     return false;
                 }
             }
+            Marshal.Copy(faces, 0, outMesh.faces, outMesh.n_faces * 3);
             errorMessage = "";
             return true;
         }
 
+        public static bool RhinoPolylinesToCPolyline(
+            List<Curve> parts,
+            List<Curve> boundaries,
+            ref CPolyLines outPolylines,
+            bool flipYZ)
+        {
+            outPolylines = new CPolyLines();
+            List<float> points = new List<float>();
+            List<int> sta_ends = new List<int>();
+            List<int> atBoundary = new List<int>();
+
+            //Add Parts
+            int count = 0;
+            foreach (var curve in parts)
+            {
+                int sta = count;
+                Polyline polyline;
+                curve.TryGetPolyline(out polyline);
+
+                for (int id = 0; id < polyline.Count - 1; id++)
+                {
+                    Point3d pt = polyline[id];
+                    points.Add((float)pt.X);
+
+                    if (flipYZ)
+                    {
+                        //flip YZ because the coordianate systems of rhino and C++ are different
+                        points.Add((float)pt.Z);
+                        points.Add(-(float)pt.Y);
+                    }
+                    else
+                    {
+                        points.Add((float)pt.Y);
+                        points.Add((float)pt.Z);
+                    }
+                    count++;
+                }
+                int end = count - 1;
+                sta_ends.Add(sta);
+                sta_ends.Add(end);
+                atBoundary.Add(0);
+            }
+
+
+            //Add Boundries
+            foreach (var curve in boundaries)
+            {
+                int sta = count;
+                Polyline polyline;
+                curve.TryGetPolyline(out polyline);
+
+                for (int id = 0; id < polyline.Count - 1; id++)
+                {
+                    Point3d pt = polyline[id];
+                    if (flipYZ)
+                    {
+                        //flip YZ because the coordianate systems of rhino and C++ are different
+                        points.Add((float)pt.Z);
+                        points.Add(-(float)pt.Y);
+                    }
+                    else
+                    {
+                        points.Add((float)pt.Y);
+                        points.Add((float)pt.Z);
+                    }
+                    count++;
+                }
+                int end = count - 1;
+                sta_ends.Add(sta);
+                sta_ends.Add(end);
+                atBoundary.Add(1);
+            }
+
+            outPolylines.n_polyline = sta_ends.Count / 2;
+            outPolylines.n_points = points.Count / 3;
+
+            outPolylines.points = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(float)) * points.Count);
+            outPolylines.sta_ends = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(int)) * sta_ends.Count);
+
+            float[] array_points = points.ToArray();
+            int[] array_sta_ends = sta_ends.ToArray();
+            Marshal.Copy(array_points, 0, outPolylines.points, points.Count);
+            Marshal.Copy(array_sta_ends, 0, outPolylines.sta_ends, sta_ends.Count);
+
+            if (boundaries.Count != 0)
+            {
+                int[] array_atBoundary = atBoundary.ToArray();
+                outPolylines.atBoundary = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(int)) * atBoundary.Count);
+                Marshal.Copy(array_atBoundary, 0, outPolylines.atBoundary, atBoundary.Count); 
+            }
+
+            return true;
+        }
     }
 }

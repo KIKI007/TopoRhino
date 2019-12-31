@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Runtime.InteropServices;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
@@ -58,15 +58,17 @@ namespace TopoGrasshopper
 
             CMesh crefMesh = new CMesh();
             String errorMessage = "";
-            if (TopoCreator.RhinoMeshtoCMesh(refMesh, ref crefMesh, true, out errorMessage))
+            if (TopoCreator.RhinoMeshToCMesh(refMesh, ref crefMesh, true, out errorMessage))
             {
                 TopoCreator.setReferenceSurface(ref crefMesh, topoData);
             }
             else
             {
                 AddRuntimeMessage(GH_RuntimeMessageLevel.Error, errorMessage);
+                return;
             }
-
+            Marshal.FreeHGlobal(crefMesh.points);
+            Marshal.FreeHGlobal(crefMesh.faces);
             DA.SetData(0, topoData);
         }
 

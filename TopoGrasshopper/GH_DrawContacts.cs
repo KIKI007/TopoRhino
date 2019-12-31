@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.Runtime.InteropServices;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
@@ -82,41 +82,18 @@ namespace TopoGrasshopper
         private void addToContactGraph(Mesh mesh, bool atBoundary, IntPtr graphData)
         {
             CMesh cmesh = new CMesh();
-
-            cmesh.n_vertices = mesh.Vertices.Count;
-            cmesh.n_faces = mesh.Faces.Count;
-
-            if (cmesh.n_vertices * 3 >= Constants.MAXIMUM_MESHSIZE || cmesh.n_faces * 3 >= Constants.MAXIMUM_MESHSIZE)
+            String errorMessage;
+            if(TopoCreator.RhinoMeshToCMesh(mesh, ref cmesh, false, out errorMessage))
             {
-                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Exceed maximum mesh size!");
+                TopoCreator.addMeshesToContactGraph(graphData, ref cmesh, atBoundary);
+            }
+            else
+            {
+                AddRuntimeMessage(GH_RuntimeMessageLevel.Error, errorMessage);
                 return;
             }
-
-            cmesh.points = new float[cmesh.n_vertices * 3];
-            cmesh.faces = new int[cmesh.n_faces * 3];
-
-            for (int id = 0; id < mesh.Vertices.Count; id++)
-            {
-                cmesh.points[id * 3] = mesh.Vertices[id].X;
-                cmesh.points[id * 3 + 1] = mesh.Vertices[id].Y;
-                cmesh.points[id * 3 + 2] = mesh.Vertices[id].Z;
-            }
-
-            for (int id = 0; id < mesh.Faces.Count; id++)
-            {
-                if (mesh.Faces[id].IsTriangle)
-                {
-                    cmesh.faces[id * 3] = mesh.Faces[id].A;
-                    cmesh.faces[id * 3 + 1] = mesh.Faces[id].B;
-                    cmesh.faces[id * 3 + 2] = mesh.Faces[id].C;
-                }
-                else
-                {
-                    AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Mesh has Quad Faces!");
-                    return;
-                }
-            }
-            TopoCreator.addMeshesToContactGraph(graphData, ref cmesh, atBoundary);
+            Marshal.FreeHGlobal(cmesh.points);
+            Marshal.FreeHGlobal(cmesh.faces);
         }
 
 

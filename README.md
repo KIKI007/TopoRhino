@@ -16,7 +16,7 @@ To run the plugin, please make sure the visual c++ runtime enviroment is install
 
 **Step 2**:
 
-Copy all "*.dll, *ilk, *pdb" file in the "WinBin" folder into "C:\Program Files\Rhino 6\System" (need administrator authority?
+Copy all "*.dll, *ilk, *pdb" file in the "WinBin" folder into "C:\Program Files\Rhino 6\System" (need administrator authority)
 
 **Step 3**:
 

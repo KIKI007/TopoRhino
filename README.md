@@ -4,7 +4,7 @@
 1. Compile **C++** Code into dynamic link library (.dll).
 2. Use RhinoCommon SDK (C#) to import the C++ library.
 
-## Installment for Windows
+## For Windows Users
 
 **Step 0**:
 

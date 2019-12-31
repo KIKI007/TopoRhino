@@ -16,7 +16,7 @@ To run the plugin, please make sure the visual c++ runtime enviroment is install
 
 **Step 2**:
 
-Copy all "*.dll, *ilk, *pdb" file in "WinBin" folder into "C:\Program Files\Rhino 6\System" (need administrator authority?
+Copy all "*.dll, *ilk, *pdb" file in the "WinBin" folder into "C:\Program Files\Rhino 6\System" (need administrator authority?
 
 **Step 3**:
 
@@ -24,4 +24,4 @@ Drag "TopoGrasshopperWin.gha" and "TopoRhino.rhp" into Rhino6 Software Interface
 
 **Step 4**:
 
-To run example, please have a look at "example" folder
+To run the example scripts, please have a look at the "example" folder

@@ -20,8 +20,8 @@ Copy all "*.dll, *ilk, *pdb" file in the "WinBin" folder into "C:\Program Files\
 
 **Step 3**:
 
-Drag "TopoGrasshopperWin.gha" and "TopoRhino.rhp" into Rhino6 Software Interface.
+Open Rhino 6 and drag "WinBin/TopoGrasshopperWin.gha" and "WinBin/TopoRhino.rhp" into the Software Interface.
 
 **Step 4**:
 
-To run the example scripts, please have a look at the "example" folder
+The example folder has 3 grasshopper scripts to explain the usage of this tool.

@@ -5,3 +5,5 @@ TopoRhino/bin
 TopoRhino/obj
 TopoRhino/Properties
 TopoGrasshopper/obj
+TopoRhino/obj/Release/TopoRhino.dll
+example/.DS_Store

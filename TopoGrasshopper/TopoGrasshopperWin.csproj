@@ -68,7 +68,9 @@
     <Compile Include="GH_ModifyParameters.cs" />
     <Compile Include="GH_ModifyPattern.cs" />
     <Compile Include="GH_ModifyReferenceMesh.cs" />
+    <Compile Include="GH_TestInterlocking.cs" />
     <Compile Include="GH_TopoXMLReader.cs" />
+    <Compile Include="GH_TopoXMLWriter.cs" />
     <Compile Include="TopoGrasshopperInfo.cs" />
     <Compile Include="..\TopoRhino\CMesh.cs" />
     <Compile Include="..\TopoRhino\TopoCreator.cs" />

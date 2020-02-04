@@ -5,6 +5,8 @@ using Grasshopper;
 using Grasshopper.Kernel;
 using Rhino.Geometry;
 
+using TopoRhino;
+
 namespace TopoGrasshopper
 {
     public class GH_TopoXMLWriter : GH_Component
@@ -17,9 +19,9 @@ namespace TopoGrasshopper
         /// new tabs/panels will automatically be created.
         /// </summary>
         public GH_TopoXMLWriter()
-          : base("GH_TopoXMLWriter", "Nickname",
-            "GH_TopoXMLWriter description",
-            "Category", "Subcategory")
+          : base("TopoXMLWriter", "TopoXMLWriter",
+            "Write to a XML Filename.",
+            "TopoCreator", "IO")
         {
         }
 
@@ -28,6 +30,9 @@ namespace TopoGrasshopper
         /// </summary>
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
+            pManager.AddGenericParameter("TopoPtr", "TopoPtr", "TopoPtr", GH_ParamAccess.item);
+            pManager.AddTextParameter("XMLFile", "xml", "XML Filename", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Trigger", "Trigger", "Trigger", GH_ParamAccess.item);
         }
 
         /// <summary>
@@ -35,6 +40,7 @@ namespace TopoGrasshopper
         /// </summary>
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+
         }
 
         /// <summary>
@@ -44,6 +50,17 @@ namespace TopoGrasshopper
         /// to store data in output parameters.</param>
         protected override void SolveInstance(IGH_DataAccess DA)
         {
+            String xml_file = "";
+            IntPtr topoData = IntPtr.Zero;
+            bool runProgram = false;
+            if (!DA.GetData(0, ref topoData)) return;
+            if (!DA.GetData(1, ref xml_file)) return;
+            if (!DA.GetData(2, ref runProgram)) return;
+
+            if (runProgram)
+            {
+                TopoCreator.writeXML(topoData, xml_file);
+            }
         }
 
         /// <summary>

@@ -28,6 +28,9 @@ namespace TopoRhino
         internal static extern IntPtr readXML(string xmlpath);
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern void writeXML(IntPtr data, string xmlpath);
+        
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr initStructure();
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
@@ -65,6 +68,9 @@ namespace TopoRhino
 
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern IntPtr initContactMesh(IntPtr graphData);
+
+        [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
+        internal static extern int testInterlocking(IntPtr graphData);
         
         [DllImport(Import.lib, CallingConvention = CallingConvention.Cdecl)]
         internal static extern int isNull(IntPtr mesh);
